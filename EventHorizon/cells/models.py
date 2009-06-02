@@ -212,10 +212,12 @@ class StoryCell(BaseCell):
 
 
 class ConceptCell(BaseCell):
+    """Represents a semantic concept"""
     pass
 
 
 
 class StatementCell(BaseCell):
+    """Represents a semantic statement describing concepts & instances"""
     pass
 
