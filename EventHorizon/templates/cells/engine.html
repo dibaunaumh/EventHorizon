@@ -1,0 +1,40 @@
+{% extends 'admin/base.html' %}
+{% load i18n %}
+
+
+{% block content %}
+
+
+<table border="0" width="80%">
+    <tr>
+        <td width="30%" valign="top" align="left">
+            <form>
+                <p>
+                    <input type="text" width="60" name="query">
+                    <input type="button" value="Filter">
+                </p>
+            </form>
+        </td>
+        <td>
+            <h3>{% trans 'Currently' %} {{ nagents }} {% trans ' agents are serving' %}</h3>
+        </td>
+    </tr>
+    <tr>
+        <td width="30%" valign="top" align="right">
+            <br/>
+            <a href="#" style="background-color: #D5D5D5">Layer 0</a><br/>
+            <br/>
+            <a href="#" style="background-color: #D5D5D5">Layer 1</a><br/>
+            <br/>
+            <a href="#" style="background-color: #D5D5D5">Layer 2</a><br/>
+            <br/>
+            <a href="#" style="background-color: #D5D5D5">Layer 3</a><br/>
+        </td>
+        <td>
+            <canvas id="engine" width="500" height="500" style="background-color: #F5F5F5">
+            </canvas>
+        </td>
+    </tr>
+</table>
+
+{% endblock content %}
