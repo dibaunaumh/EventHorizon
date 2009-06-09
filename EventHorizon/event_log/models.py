@@ -34,7 +34,7 @@ class EventLog(models.Model):
         
     
     def __unicode__(self):
-        return u"%s %s: %s" % (event_type, _('event'), message)
+        return u"%s %s: %s" % (self.event_type, _('event'), self.message)
     
     
 
@@ -54,3 +54,9 @@ def log_event(event_type_name, entity_type, entity_id, message=None, correlation
     else:
         logging.error("Can't log event: wrong event type given: %s" % event_type_name)
         return None
+    
+
+def get_log(correlation_id):
+    """Retrieves all event log records for a given correlation id"""
+    return EventLog.objects.filter(correlation_id=correlation_id)
+

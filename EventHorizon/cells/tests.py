@@ -3,12 +3,18 @@ Test cases for the cells app.
 """
 
 from django.test import TestCase
+from django.contrib.sites.models import *
 from cells.models import *
 from event_log.models import *
 import datetime
+import sys
+from django.test import Client
+from django.core.urlresolvers import reverse
 
 
 class CellsTest(TestCase):
+    
+    
     def setUp(self):
         query = SocietyCell.objects.all()
         if query.count() > 0:
@@ -17,30 +23,32 @@ class CellsTest(TestCase):
             self.society_cell = SocietyCell()
             self.society_cell.name = "Test domain"
             self.society_cell.layer = 0
-            self.society_cell.x = self.society_cell.y = 0
             self.society_cell.core = "A test society"
-            self.society_cell.save()
+            self.society_cell.move_to_random_location()
     
     
-    def test_add_agent(self):
-        """
-        Tests that an agent cell was properly created.
-        """
-        d = datetime.datetime.now().microsecond
-        user_name = "joe.%d" % d
-        password = "1234"
-        new_agent = self.society_cell.add_agent(user_name, password, DATASOURCE_TYPE_TWITTER)
-        # test that a user cell was created, with details matching the given user details
-        query = UserCell.objects.filter(user_name=user_name)
-        self.assertEquals(1, query.count(), "Less or more than 1 matching user found.")
-        user = query[0]
-        self.assertEquals(password, user.user_password, "User password doesn't match")
-        # test that the user cell is a child of the agent cell
-        self.assertTrue(user.container != None, "User has no container")
-        agent = user.container
-        self.assertEquals(new_agent.id, agent.id)
-        # test that the agent cell is a child of our society cell
-        self.assertEquals(agent.container.id, self.society_cell.id)
+    def test_move_to_random_location(self):
+        # try many times
+        for i in range(100):
+            self.assertTrue(self.society_cell.move_to_random_location() != None)
+    
+    
+    def test_move_to(self):
+        agent1 = self.society_cell.add_agent("test1", "test1", DATASOURCE_TYPE_TWITTER)
+        loc = (666, 777)
+        agent1.move_to(loc)
+        self.failUnlessEqual(agent1.get_location(), loc, "Location not set properly by move_to")
+        agent2 = self.society_cell.add_agent("test2", "test2", DATASOURCE_TYPE_TWITTER)
+        agent1.move_to_random_location()
+        loc = agent1.get_location()
+        self.failUnlessRaises(LocationCaughtError,  agent2.move_to, loc)
+                         
+
+    def test_location(self):
+        agent3 = self.society_cell.add_agent("test3", "test3", DATASOURCE_TYPE_TWITTER)
+        agent3.move_to_random_location()
+        expected = "(layer-%d, %d, %d)" % (agent3.layer, agent3.x, agent3.y)
+        self.failUnlessEqual(expected, agent3.location, "Location property not as expected") 
 
 
     def test_add_user(self):
@@ -58,3 +66,14 @@ class CellsTest(TestCase):
         self.society_cell.process(d)
         query = EventLog.objects.filter(correlation_id=d)
         self.assertTrue(query.count > 3)
+        
+    
+    def test_process_service(self):
+        """Tests that invoking the process service indeed results in processing events. Requires a running server"""
+        client = Client()
+        # todo use reverse
+        response = client.get("/cells/process/1")
+        log = response.context[-1]['log']
+        print log
+        # todo extract the processing cycle id, & get the log of events for that id
+        self.failUnless(len(log) > 3, "Processing log has too few events")

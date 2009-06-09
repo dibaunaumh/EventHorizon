@@ -1,0 +1,19 @@
+{% extends 'admin/base_site.html' %}
+{% load i18n %}
+
+
+{% block content %}
+
+<h1>Processing cycle log # {{ cycle.id }}</h1>
+
+<table>
+{% for event in log %}
+    <tr>
+        <th>{{ event.event_type }}</th>
+        <td>{{ event.entity_type }}.{{ entity.id }}</td>
+        <td>{{ event.message }}</td>
+        <td>{{ event.last_update }}</td>
+    </tr>
+{% endfor %}
+</table>
+{% endblock content %}

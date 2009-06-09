@@ -1,16 +1,42 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from event_log.models import *
+import random
+from sqlite3 import IntegrityError
 
 
 DATASOURCE_TYPE_TWITTER = "Twitter"
 DATASOURCE_TYPE_REALITY_TREE = "RealityTree"
 DATASOURCE_TYPE_RSS = "RSS"
 
+PROCESSING_CYCLE_STATUS_NOT_STARTED = 0
+PROCESSING_CYCLE_STATUS_STARTED = 1
+PROCESSING_CYCLE_STATUS_COMPLETED = 2
+PROCESSING_CYCLE_STATUS_FAILED = 3
+
+PROCESSING_CYCLE_STATUS_CHOICES = ((PROCESSING_CYCLE_STATUS_NOT_STARTED, "Not started"), 
+                                   (PROCESSING_CYCLE_STATUS_STARTED, "Started"), 
+                                   (PROCESSING_CYCLE_STATUS_COMPLETED, "Completed"), 
+                                   (PROCESSING_CYCLE_STATUS_FAILED, "Failed"))
+
+LAYER_SIZE = 1000
+
+
+class LocationCaughtError(ValueError):
+    pass
+
+
+class ProcessingCycle(models.Model):
+    status = models.IntegerField(_('status'), default=PROCESSING_CYCLE_STATUS_NOT_STARTED, choices=PROCESSING_CYCLE_STATUS_CHOICES)
+    last_update = models.DateTimeField(_('last update'), auto_now=True)
+    
+    def __unicode__(self):
+        return u"%s %d" % (_('Processing cycle'), self.id)
+
 
 
 class BaseCell(models.Model):
-    """Base cell class, containing most of the common properties of
+    """Base cell class, containing most of the common properties ofpp
     a cell: an active entity in a multi-layer composite domain model.
     A cell acts in a 2d grid layer, in which it moves & interacts with
     neighbor cells. Cell normally has a container cell in a higher layer
@@ -18,8 +44,9 @@ class BaseCell(models.Model):
     name = models.CharField(_('name'), max_length=1000, db_index=True, help_text='The name generated for this cell')
     core = models.TextField(_('core'), help_text=_('The content of a cell'))
     layer = models.IntegerField(_('layer'), help_text=_('The layer in which the cell acts'))
-    x = models.IntegerField(_('x'), help_text=_('The x coordinate of the cell within its layer'))
-    y = models.IntegerField(_('y'), help_text=_('The y coordinate of the cell within its layer'))
+    x = models.IntegerField(_('x'), db_index=True, help_text=_('The x coordinate of the cell within its layer'))
+    y = models.IntegerField(_('y'), db_index=True, help_text=_('The y coordinate of the cell within its layer'))
+    location = models.CharField(_('location'), db_index=True, unique=True, max_length=30, help_text=_("A representation of the cell's location (e.g., (layer-0, 765, 678) ), used mainly to prevent collisions between cells, using the database uniqueness constraint."))
     container = models.ForeignKey('self', verbose_name=_('container'), related_name="children", null=True, blank=True, help_text=_('The cell containing the cell'))
     child_count = models.IntegerField(_('child count'), default=0, editable=False, help_text=_('how many child cells does the cell have'))
     external_id = models.CharField(_('external id'), max_length=500, null=True, blank=True, help_text=_('The id of the object represented by the cell, in the 3rd party system from which it was obtained.'))
@@ -44,6 +71,46 @@ class BaseCell(models.Model):
     #    self.external_id = external_id
     #    self.move_to_random_location()
     
+    
+    def get_location(self):
+        return (self.x, self.y)
+
+    
+    def move_to_random_location(self):
+        """Tries to create the cell in a random location inside its layer. If the location isn't empty, retries in another location."""
+        trials = LAYER_SIZE**2*10
+        while trials > 0:
+            try:
+                return self.move_to(self.get_random_location())
+            except:
+                # assuming failing due to uniqueness constraint violation. 
+                trials = trials - 1
+
+    
+    def move_to(self, location):
+        """Receives a 2d coordinates of a location as tuple of 2 integers, & tries to set the cell's location to these coordinates. Returns an exception if the location is caught"""
+        self.x, self.y = location
+        self.location = "(layer-%d, %d, %d)" % (self.layer, self.x, self.y)
+        try:
+            self.save()
+            print "saved:", self, self.x, ",", self.y
+            return self.location
+        except IntegrityError:  # todo add support for other databases specific exceptions
+            raise LocationCaughtError("Location %s is already caught" % self.location)
+    
+    
+    def get_random_location(self):
+        """Returns random 2d coordinates in the dimensions of the layer."""
+        return (random.randint(0, LAYER_SIZE-1), random.randint(0, LAYER_SIZE-1))
+    
+    
+    def get_cell_at_location(self, x, y):
+        """Returns the celll at the given location, or None in case the location is empty."""
+        query = BaseCell.objects.filter(x = x, y = y)
+        if query.count() > 0:
+                return query[0]
+        return None
+    
 
     def process(self, process_cycle_id=-1):
         """Recursively invokes the processing of the child cells."""
@@ -51,18 +118,6 @@ class BaseCell(models.Model):
         log_event("process", "BaseCell", -1, "Invoking child cells process method", process_cycle_id)
         for child in self.children.all():
             child.process(process_cycle_id)      
-    
-    
-    def move_to_random_location(self):
-        pass
-    
-    
-    def get_child_at_location(self, x, y):
-        """Returns the child at the given location, or None in case the location is empty."""
-        for child in self.children.all():
-            if child.x == x and child.y == y:
-                return child
-        return None
     
 
     class Meta:
@@ -72,8 +127,6 @@ class BaseCell(models.Model):
         
     def __unicode__(self):
         return u"[%s] %s" % (_("Agent"), self.name)
-
-
 
 
 
@@ -108,9 +161,6 @@ class SocietyCell(BaseCell):
         user.user_name = user_name
         user.user_password = user_password
         user.layer = self.layer + 2
-        user.x = self.x
-        user.y = self.y
-        user.save()
         user.move_to_random_location()
         # now create an agent for that user
         name = u"%s %s" % (_("Agent for"), user_name)
@@ -120,12 +170,9 @@ class SocietyCell(BaseCell):
         agent.name = name
         agent.datasource_type = datasource_type
         agent.layer = self.layer + 1
-        agent.x = self.x
-        agent.y = self.y
-        agent.save()
         agent.move_to_random_location()
+        print "fucking got here"
         user.container = agent
-        user.save()
         return agent
 
 
