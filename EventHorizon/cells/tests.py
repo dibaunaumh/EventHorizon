@@ -77,3 +77,52 @@ class CellsTest(TestCase):
         print log
         # todo extract the processing cycle id, & get the log of events for that id
         self.failUnless(len(log) > 3, "Processing log has too few events")
+    
+    
+    
+    def test_summary_generation(self):
+    	"""Creates 3 users: 
+    	   - Joe
+    	   - Chris
+    	   - Alice
+    	   Creates 5 stories: 
+    		- Story 1: by Joe, read by Chris
+    		- Story 2: by Chris, read by Joe
+    		- Story 3: by Chris, read by Joe
+    		- Story 4: by Chris, read by Joe
+    		- Story 5: by Alice, read by Joe
+    		Invokes cells processing.
+    		Expects to find 2 summary stories from today:
+    		- Summary for Joe, containing the number of stories by Chris (3) & Alice (1)
+    		- Summary for Chris, containing the number of stories by Joe (1)
+    		"""
+    	# add agents
+    	self.society_cell.add_agent("Joe", "Joe", DATASOURCE_TYPE_TWITTER)
+    	self.society_cell.add_agent("Chris", "Chris", DATASOURCE_TYPE_TWITTER)
+    	self.society_cell.add_agent("Alice", "Alice", DATASOURCE_TYPE_TWITTER)
+    	# fetch agents
+    	query = AgentCell.objects.filter(user__user_name="Joe")
+    	self.assertTrue(query.count() > 0, "Agent wasn't created")
+    	joe = query[0]
+    	query = AgentCell.objects.filter(user__user_name="Chris")
+    	self.assertTrue(query.count() > 0, "Agent wasn't created")
+    	print "Joe's user: ", joe.user
+    	chris = query[0]
+    	query = AgentCell.objects.filter(user__user_name="Alice")
+    	self.assertTrue(query.count() > 0, "Agent wasn't created")
+    	alice = query[0]
+    	# add stories
+    	chris.add_read_story("Story 1", [joe.user])
+    	joe.add_read_story("Story 2", [chris.user])
+    	joe.add_read_story("Story 3", [chris.user])
+    	joe.add_read_story("Story 4", [chris.user])
+    	joe.add_read_story("Story 5", [alice.user])
+    	# invoke cells processing
+    	d = datetime.datetime.now().microsecond
+    	self.society_cell.process(d)
+    	# verify that 2 summary stories were created
+    	query = StoryCell.objects.filter(is_aggregation=True)
+    	for s in query:
+    		print s.name, " -----> ", s.core
+    	self.assertEquals(2, query.count(), "Expected that 2 summary stories will be created")
+    	

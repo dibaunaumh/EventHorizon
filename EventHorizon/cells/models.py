@@ -3,6 +3,8 @@ from django.utils.translation import gettext_lazy as _
 from event_log.models import *
 import random
 from sqlite3 import IntegrityError
+import datetime
+from time import gmtime
 
 
 DATASOURCE_TYPE_TWITTER = "Twitter"
@@ -111,13 +113,30 @@ class BaseCell(models.Model):
                 return query[0]
         return None
     
+    
+    def reduce_to_subclass(self):
+        """Hack: tries to load the instance from a subclass of BaseCell, according to its layer"""
+        if self.layer == 0:
+            return SocietyCell.objects.get(pk=self.id)
+        elif self.layer == 1:
+            return AgentCell.objects.get(pk=self.id)
+        elif self.layer == 2:
+            try:
+                return UserCell.objects.get(pk=self.id)
+            except:
+                return StoryCell.objects.get(pk=self.id)
+            
 
     def process(self, process_cycle_id=-1):
         """Recursively invokes the processing of the child cells."""
         # todo create a processing cycle, & use its id as correlation id
-        log_event("process", "BaseCell", -1, "Invoking child cells process method", process_cycle_id)
+        log_event("process", "BaseCell", self.id, "Invoking child cells process method", process_cycle_id)
         for child in self.children.all():
-            child.process(process_cycle_id)      
+            # hack alert: need to figure out how to do this properly
+            real_child = child.reduce_to_subclass()
+            print real_child
+            real_child.process(process_cycle_id) 
+            child.process(process_cycle_id)     
     
 
     class Meta:
@@ -158,6 +177,7 @@ class SocietyCell(BaseCell):
         """Creates a child agent cell"""
         # 1st create a user
         user = UserCell()
+        user.name = user_name
         user.user_name = user_name
         user.user_password = user_password
         user.layer = self.layer + 2
@@ -171,13 +191,19 @@ class SocietyCell(BaseCell):
         agent.datasource_type = datasource_type
         agent.layer = self.layer + 1
         agent.move_to_random_location()
-        print "fucking got here"
         user.container = agent
         return agent
 
 
+    def process(self, correlation_id=-1):
+        log_event("process", "SocietyCell", self.id, "Not doing nothing", correlation_id)
+        # todo implement
+        BaseCell.process(self, correlation_id)
+
+
     def __unicode__(self):
         return u"[%s] %s" % (_("Society"), self.name)
+
 
 
 class UserCell(BaseCell):
@@ -209,6 +235,87 @@ class UserCell(BaseCell):
         pass
 
 
+    def process(self, correlation_id=-1):
+        log_event("process", "UserCell", self.id, "Not doing nothing", correlation_id)
+        # todo implement
+        pass
+
+
+
+
+class StoryCell(BaseCell):
+    """Directly contains Concept & Statement cells."""
+    authors = models.ManyToManyField(UserCell, verbose_name=_('authors'), related_name='outgoing_stories', null=True, blank=True, help_text=_('who are the authors of the story'))
+    recipients = models.ManyToManyField(UserCell, verbose_name=_('recipients'), related_name='incoming_stories', null=True, blank=True, help_text=_('users to whom the story will be delivered'))
+    is_aggregation = models.BooleanField(_('is aggregation'), default=False, help_text=_('whether the story is an aggregation/summary of one or more other stories'))
+    aggregated_stories = models.ManyToManyField('self', verbose_name=_('aggregated stories'), null=True, blank=True, help_text=_('stories aggregated/summarized by this story'))
+
+
+    def __unicode__(self):
+        return u"[%s] %s" % (_('Story'), self.name)
+
+
+    def process(self, correlation_id=-1):
+    	"""Story cells have 3 main behaviors: 
+        - translating their content to semantic cells; 
+        - changing location to reflect semantic orientation; 
+        - generating summary stories."""
+        log_event("process", "StoryCell", self.id, "Updating summary stories", correlation_id)
+        self.update_summary_stories()
+
+
+    def update_summary_stories(self):
+        """Unless this story is a summary story, loop on all recipients, look-up or create a summary story, & add itself to it."""
+        if self.is_aggregation:
+            return
+        # update the summary story for all recipients
+        for user in self.recipients.all():
+            # look up a summary story for that user: 
+            # - it should be marked as is_aggregation
+            # - it should have the user as recipient
+            # - it should be from today
+            t = gmtime()[:3]
+            tod = datetime.datetime(t[0], t[1], t[2])
+            query = StoryCell.objects.filter(is_aggregation=True, recipients__pk=user.id, last_update__gte=tod)
+            if query.count() > 0:
+                summary_story = query[0]
+            else:
+                # if not found, create one
+                summary_story = StoryCell()
+                summary_story.name = "%s's %s %s" % (user.name, _('summary for'), tod.strftime("%c"))
+                summary_story.container = self.container
+                summary_story.layer = self.layer
+                summary_story.is_aggregation = True
+                summary_story.move_to_random_location()
+                summary_story.recipients.add(user)
+            # add the story to the summary
+            summary_story.aggregated_stories.add(self)
+            summary_story.generate_summary()
+
+
+    def generate_summary(self):
+    	"""Generate a summary story based on the aggregated stories"""
+        recipient = self.recipients.all()[0]
+        tod = datetime.datetime.today()
+        authors_map = {}
+        print "Generating summary"
+        for story in self.aggregated_stories.all():
+            for author in story.authors.all():
+                if authors_map.has_key(author):
+                    authors_map[author] = authors_map[author] + 1
+                else:
+                   authors_map[author] = 1
+        # todo use template
+        summary = "<h3>Summary for %s</h3>" % recipient
+        for author, count in authors_map.items():
+            summary = summary + "<li>%s twitted %d times" % (author, count)
+        self.core = summary
+        self.save()
+
+
+
+
+
 
 
 
@@ -235,9 +342,30 @@ class AgentCell(BaseCell):
         user = UserCell()
     
     
+    def add_read_story(self, text, authors):
+        """Creates a StoryCell with the given text & authors. Sets the agent's user as the story recipient."""
+        story = StoryCell()
+        story.name = text
+        story.container = self
+        story.core = text
+        story.layer = self.layer + 1
+        story.move_to_random_location()
+        story.recipients.add(self.user)
+        for author in authors:
+            story.authors.add(author)
+        story.save()
+
+
     def fetch_stories(self):
         """Fetches new stories from the datasource. Uses the last story external id to 
         fetch only new stories."""
+        pass
+    
+    
+    def process(self, correlation_id=-1):
+        print "agent.process"
+        log_event("process", "AgentCell", self.id, "Fetching stories", correlation_id)
+        # todo implement
         pass
 
 
@@ -251,13 +379,6 @@ class AgentCell(BaseCell):
     
     
     
-class StoryCell(BaseCell):
-    """Directly contains Concept & Statement cells."""
-    pass
-
-
-
-
 class ConceptCell(BaseCell):
     """Represents a semantic concept"""
     pass

@@ -10,7 +10,7 @@ class EventTypeOptions(admin.ModelAdmin):
 
 class EventLogOptions(admin.ModelAdmin):
     list_display = ('event_type', 'entity_type', 'entity_id', 'message', 'correlation_id', 'last_update',)
-    list_filter = ('event_type', 'entity_type', 'entity_id',)
+    list_filter = ('event_type', 'entity_type',)
     search_fields = ('event_type__name', 'entity_type', 'entity_id', 'message', 'correlation_id',)
     date_hierarchy = 'last_update'
     ordering = ('-last_update',)

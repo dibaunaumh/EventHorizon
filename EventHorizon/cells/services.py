@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from cells.models import *
 from event_log import *
+import sys
 
 
 CORRELATION_ID = "correlation_id" 
@@ -29,6 +30,7 @@ def process(request, cell_id):
         cycle.save()
         log_event("processing_completed", "BaseCell", cell_id, "Processing completed", correlation_id=cycle.id)
     except:
+        print sys.exc_info()
         cycle.status = PROCESSING_CYCLE_STATUS_FAILED
         cycle.save()
         log_event("processing_failed", "BaseCell", cell_id, "Processing failed", correlation_id=cycle.id)
