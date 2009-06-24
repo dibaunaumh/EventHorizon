@@ -5,6 +5,8 @@ from utils import today, shorten_url, send_twitter_direct_message
 import random
 from sqlite3 import IntegrityError
 import datetime
+import urllib
+import simplejson as json
 
 
 DATASOURCE_TYPE_TWITTER = "Twitter"
@@ -340,12 +342,6 @@ class StoryCell(BaseCell):
         self.save()
 
 
-
-
-
-
-
-
 class AgentCell(BaseCell):
     """Represents a part of the domain, and responsible for interacting
     with the systems representing it, e.g., end users. For that sake, an 
@@ -387,10 +383,18 @@ class AgentCell(BaseCell):
     def fetch_stories(self):
         """Fetches new stories from the datasource. Uses the last story external id to 
         fetch only new stories."""
-        # todo implement
-        pass
-    
-    
+        url = "http://localhost:8000/twitter_sensor/?user=%s&password=%s" % (user.user_name, user.user_password)
+        tweets = urllib.urlopen(url).read()
+        tweets = json.loads(tweets)
+        for key in tweets:
+            try :
+                authors = []
+                authors.append(tweets[key])
+                self.add_read_story(key, authors)
+                self.add_user(tweets[key])
+            except:
+                pass
+
     def process(self, correlation_id=-1):
         log_event("process", "AgentCell", self.id, "Fetching stories", correlation_id)
         self.fetch_stories()
