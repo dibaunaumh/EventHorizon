@@ -7,5 +7,12 @@ from cells.models import *
 
 
 def home(request):
+    """Renders the engine view page"""
     nagents = AgentCell.objects.all().count()
     return render_to_response('cells/engine.html', locals())
+
+
+def view_story_cell(request, cell_id):
+    """Renders a Story Cell"""
+    cell = get_object_or_404(StoryCell, pk=cell_id)
+    return render_to_response('cells/story.html', locals())

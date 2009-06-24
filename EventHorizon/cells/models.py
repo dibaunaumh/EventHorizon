@@ -1,10 +1,10 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from event_log.models import *
+from utils import today, shorten_url, send_twitter_direct_message
 import random
 from sqlite3 import IntegrityError
 import datetime
-from time import gmtime
 
 
 DATASOURCE_TYPE_TWITTER = "Twitter"
@@ -131,12 +131,13 @@ class BaseCell(models.Model):
         """Recursively invokes the processing of the child cells."""
         # todo create a processing cycle, & use its id as correlation id
         log_event("process", "BaseCell", self.id, "Invoking child cells process method", process_cycle_id)
+        self.last_processing_cycle = process_cycle_id
+        self.save()
         for child in self.children.all():
             # hack alert: need to figure out how to do this properly
             real_child = child.reduce_to_subclass()
-            print real_child
             real_child.process(process_cycle_id) 
-            child.process(process_cycle_id)     
+            child.process(process_cycle_id)
     
 
     class Meta:
@@ -255,13 +256,41 @@ class StoryCell(BaseCell):
         return u"[%s] %s" % (_('Story'), self.name)
 
 
+    def get_absolute_url(self):
+        # todo implement properly
+        site = "http://localhost:8000"
+        return "%s/cells/view/story/%d" % (site, self.id)
+
+
     def process(self, correlation_id=-1):
     	"""Story cells have 3 main behaviors: 
         - translating their content to semantic cells; 
         - changing location to reflect semantic orientation; 
         - generating summary stories."""
-        log_event("process", "StoryCell", self.id, "Updating summary stories", correlation_id)
-        self.update_summary_stories()
+        # if needed, update summary stories
+        tod = today()
+        if self.created_at >= tod:
+            log_event("process", "StoryCell", self.id, "Updating summary stories", correlation_id)
+            self.update_summary_stories()
+        # move to a location, maximizing the value of the story
+        # todo have max trials
+        done = False
+        while not done:
+            try:
+                self.move()
+                done = True
+            except:
+                pass
+        
+        
+
+    def move(self):
+        # todo implement
+        #possible_movement_targets = find_possible_movement_targets()
+        #evaluated_movement_targets = evaluate_possible_movement_targets(possible_movement_targets)
+        #max_value_target = max(evaluated_movement_targets)
+        #self.move_to(max_value_target[1])
+        pass
 
 
     def update_summary_stories(self):
@@ -274,8 +303,7 @@ class StoryCell(BaseCell):
             # - it should be marked as is_aggregation
             # - it should have the user as recipient
             # - it should be from today
-            t = gmtime()[:3]
-            tod = datetime.datetime(t[0], t[1], t[2])
+            tod = today()
             query = StoryCell.objects.filter(is_aggregation=True, recipients__pk=user.id, last_update__gte=tod)
             if query.count() > 0:
                 summary_story = query[0]
@@ -298,8 +326,7 @@ class StoryCell(BaseCell):
         recipient = self.recipients.all()[0]
         tod = datetime.datetime.today()
         authors_map = {}
-        print "Generating summary"
-        for story in self.aggregated_stories.all():
+        for story in self.aggregated_stories.filter(last_update__gte=today()):
             for author in story.authors.all():
                 if authors_map.has_key(author):
                     authors_map[author] = authors_map[author] + 1
@@ -328,6 +355,7 @@ class AgentCell(BaseCell):
     user = models.ForeignKey(UserCell)
     datasource_type = models.CharField(_('datasource type'), max_length=100, help_text=_('the type of datasource, from which to fetch stories, e.g., TWITTER_FRIENDS_TIMELINE'))
     last_story = models.CharField(_('last story'), max_length=100, null=True, blank=True, help_text=_('external id of the last story fetched.'))
+    last_summary_delivered_at = models.DateTimeField(_('last summary delivered at'), null=True, blank=True)
 
 
     #def __init__(self, name, container, datasource_type, user_name, user_password, user_full_name=None, user_email=None, 
@@ -359,14 +387,34 @@ class AgentCell(BaseCell):
     def fetch_stories(self):
         """Fetches new stories from the datasource. Uses the last story external id to 
         fetch only new stories."""
+        # todo implement
         pass
     
     
     def process(self, correlation_id=-1):
-        print "agent.process"
         log_event("process", "AgentCell", self.id, "Fetching stories", correlation_id)
-        # todo implement
-        pass
+        self.fetch_stories()
+        # if needed send summary story
+        t = datetime.datetime.now()
+        if self.last_summary_delivered_at == None or (t - self.last_summary_delivered_at).days > 1:
+            self.send_daily_summary(correlation_id)
+            
+            
+    def send_daily_summary(self, correlation_id=-1):
+        """Sends the generated summary story for its recipient"""
+        # look up a summary
+        tod = today()
+        query = StoryCell.objects.filter(is_aggregation=True, recipients__pk=self.user.id, last_update__gte=tod)
+        if query.count() > 0:
+            summary_story = query[0]
+            # if found, send a link to it the user
+            log_event("notify", "Agent", self.id, "Sending summary story to user %s" % self.user.user_name, correlation_id)
+            link = summary_story.get_absolute_url()
+            shortened_url = shorten_url(link)
+            message = "Here's your daily summary for %s: %s" % (tod, shortened_url)
+            if send_twitter_direct_message(self, self.user.user_name, message, correlation_id):
+                self.last_summary_delivered_at = datetime.datetime.now()
+                self.save()
 
 
     #class Meta(BaseCell.Meta):

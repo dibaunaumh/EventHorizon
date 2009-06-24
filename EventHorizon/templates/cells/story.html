@@ -1,0 +1,27 @@
+{% extends 'admin/base_site.html' %}
+{% load i18n %}
+
+
+{% block title %}{% trans 'Story view' %}{% endblock title %}
+
+{% block content %}
+
+<div id="story" style="background-color: a30505a4">
+{% autoescape off %}
+{{ cell.core }}
+{% endautoescape %}
+</div>
+
+<br/>
+<br/>
+<br/>
+<hr/>
+
+{% if cell.is_aggregation %}
+	<h4>Included stories</h4>
+	{% for story in cell.aggregated_stories.all %}
+	<li>{{ story.authors.all.0.name }}: {{ story.core }} ({{ story.created_at }})
+	{% endfor %}
+{% endif %}
+	
+{% endblock content %}
