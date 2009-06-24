@@ -383,7 +383,7 @@ class AgentCell(BaseCell):
     def fetch_stories(self):
         """Fetches new stories from the datasource. Uses the last story external id to 
         fetch only new stories."""
-        url = "http://localhost:8000/twitter_sensor/?user=%s&password=%s" % (user.user_name, user.user_password)
+        url = "http://localhost:8000/twitter_sensor/?user=%s&password=%s" % (self.user.user_name, self.user.user_password)
         tweets = urllib.urlopen(url).read()
         tweets = json.loads(tweets)
         for key in tweets:
