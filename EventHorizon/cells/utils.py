@@ -3,6 +3,7 @@ import datetime
 import twitter
 import sys
 from event_log.models import log_event
+import math
 
 
 ENGINE_TWITTER_USER_NAME = "EventHorizonEng"
@@ -40,3 +41,12 @@ def send_twitter_direct_message(sender, user_name, message, correlation_id=-1):
         error_message = "%s. %s" % (context, error_message)
         log_event("notification_failed", "AgentCell", sender.id, error_message, correlation_id)
         return False
+    
+    
+def calc_distance(loc0, loc1):
+    """Calculate the distance between 2 2D coordinates."""
+    if loc1[1] == loc0[1]:
+        return abs(loc1[0] - loc0[0])
+    if loc1[0] == loc0[0]:
+        return abs(loc1[1] - loc0[1])
+    return int(math.sqrt(abs(loc1[0]-loc0[0])**2 + abs(loc1[1]-loc0[1])**2))

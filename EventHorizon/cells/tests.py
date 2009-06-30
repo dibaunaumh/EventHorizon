@@ -5,11 +5,41 @@ Test cases for the cells app.
 from django.test import TestCase
 from django.contrib.sites.models import *
 from cells.models import *
+from cells.utils import *
 from event_log.models import *
 import datetime
+from time import gmtime
 import sys
 from django.test import Client
 from django.core.urlresolvers import reverse
+
+
+class UtilsTest(TestCase):
+    
+    
+    def test_today(self):
+        t = today()
+        g = gmtime()
+        self.assertEqual(g[0], t.year)
+        self.assertEqual(g[1], t.month)
+        self.assertEqual(g[2], t.day)
+
+
+    def test_shorten_url(self):
+        # todo implement
+        pass
+
+
+    def test_send_twitter_direct_message(self):
+        # todo implement
+        pass
+
+
+    def test_calc_distance(self):
+        self.assertEqual(10, calc_distance( (10, 20), (10, 30) ))
+        self.assertEqual(5, calc_distance( (10, 20), (15, 20) ))
+        self.assertEqual(0, calc_distance( (10, 20), (10, 20) ))
+        self.assertEqual(5, calc_distance( (0, 0), (3, 4) ))
 
 
 
@@ -80,7 +110,6 @@ class CellsTest(TestCase):
         print log
         # todo extract the processing cycle id, & get the log of events for that id
         self.assertTrue(len(log) > 3, "Processing log has too few events")
-    
     
     
     def test_summary_generation(self):
@@ -156,3 +185,12 @@ class CellsTest(TestCase):
         for s in query:
             print s.name, " -----> ", s.core
     	self.assertEquals(existing_summaries_count + 2, query.count(), "Expected that only 2 summary stories will be created")
+
+
+    def test_cells_movement(self):
+        story = StoryCell.objects.all()[3]
+        x = story.x
+        y = story.y
+        self.society_cell.process()
+        story = StoryCell.objects.all()[3]
+        self.assertTrue(x != story.x or y != story.y, "Story cell didn't move")

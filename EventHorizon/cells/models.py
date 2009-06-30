@@ -1,10 +1,13 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from event_log.models import *
-from utils import today, shorten_url, send_twitter_direct_message
+from utils import today, shorten_url, send_twitter_direct_message, calc_distance
 import random
 from sqlite3 import IntegrityError
 import datetime
+from django.conf import settings
+from django.contrib.sites.models import Site
+
 
 
 DATASOURCE_TYPE_TWITTER = "Twitter"
@@ -98,6 +101,7 @@ class BaseCell(models.Model):
             print "saved:", self, self.x, ",", self.y
             return self.location
         except IntegrityError:  # todo add support for other databases specific exceptions
+            print "Failed to move: new location probably already caught"
             raise LocationCaughtError("Location %s is already caught" % self.location)
     
     
@@ -131,8 +135,6 @@ class BaseCell(models.Model):
         """Recursively invokes the processing of the child cells."""
         # todo create a processing cycle, & use its id as correlation id
         log_event("process", "BaseCell", self.id, "Invoking child cells process method", process_cycle_id)
-        self.last_processing_cycle = process_cycle_id
-        self.save()
         for child in self.children.all():
             # hack alert: need to figure out how to do this properly
             real_child = child.reduce_to_subclass()
@@ -200,6 +202,9 @@ class SocietyCell(BaseCell):
         log_event("process", "SocietyCell", self.id, "Not doing nothing", correlation_id)
         # todo implement
         BaseCell.process(self, correlation_id)
+        self.last_processing_cycle = correlation_id
+        self.save()
+
 
 
     def __unicode__(self):
@@ -239,7 +244,8 @@ class UserCell(BaseCell):
     def process(self, correlation_id=-1):
         log_event("process", "UserCell", self.id, "Not doing nothing", correlation_id)
         # todo implement
-        pass
+        self.last_processing_cycle = correlation_id
+        self.save()
 
 
 
@@ -258,8 +264,9 @@ class StoryCell(BaseCell):
 
     def get_absolute_url(self):
         # todo implement properly
-        site = "http://localhost:8000"
-        return "%s/cells/view/story/%d" % (site, self.id)
+        site = Site.objects.get(pk=settings.SITE_ID)
+        domain = site.domain
+        return "http://%s/cells/view/story/%d" % (domain, self.id)
 
 
     def process(self, correlation_id=-1):
@@ -273,24 +280,59 @@ class StoryCell(BaseCell):
             log_event("process", "StoryCell", self.id, "Updating summary stories", correlation_id)
             self.update_summary_stories()
         # move to a location, maximizing the value of the story
-        # todo have max trials
-        done = False
-        while not done:
-            try:
-                self.move()
-                done = True
-            except:
-                pass
-        
-        
+        self.move()
+        self.last_processing_cycle = correlation_id
+        self.save()
+
+
+    def find_possible_movement_targets(self):
+        """A cell can move in steps of up to 5 squares, so list the possible location in that distance."""
+        targets = []
+        for x in range(self.x - 5, self.x + 5):
+            for y in range(self.y - 5, self.y + 5):
+                if (x, y) != (self.x, self.y):
+                    targets.append( (x, y) )
+        return targets
+
+
+    def evaluate_possible_movement_targets(self, possible_targets):
+        """The value of a story location is highest when its distance from its author is 10, 
+           so determine the value of all possible target locations accordingly."""
+        result = []
+        # find the goal location - near either the author of the story, or its recipient (in case there's no author)
+        if self.authors.all().count() > 0:
+            author = self.authors.all()[0]
+            goal_location = (author.x, author.y)
+        elif self.recipients.all().count() > 0:
+            recipient = self.recipients.all()[0]
+            goal_location = (recipient.x, recipient.y)
+        else:
+            goal_location = None
+        # move toward the goal location
+        if goal_location != None:
+            for loc in possible_targets:
+                value = 10 - calc_distance(goal_location, loc)
+                result.append( (value, loc)  )
+        else :
+            result = [ (0, i) for i in possible_targets]
+        return result
+
 
     def move(self):
         # todo implement
-        #possible_movement_targets = find_possible_movement_targets()
-        #evaluated_movement_targets = evaluate_possible_movement_targets(possible_movement_targets)
-        #max_value_target = max(evaluated_movement_targets)
-        #self.move_to(max_value_target[1])
-        pass
+        possible_movement_targets = self.find_possible_movement_targets()
+        if len(possible_movement_targets) > 0:
+            evaluated_movement_targets = self.evaluate_possible_movement_targets(possible_movement_targets)
+            evaluated_movement_targets.sort()
+            done = False
+            # todo limit to max trials
+            while not done:
+                try:
+                    max_value_target = evaluated_movement_targets[-1]
+                    self.move_to(max_value_target[1])
+                    done = True
+                except LocationCaughtError:
+                    del evaluated_movement_targets[-1] 
 
 
     def update_summary_stories(self):
@@ -335,7 +377,7 @@ class StoryCell(BaseCell):
         # todo use template
         summary = "<h3>Summary for %s</h3>" % recipient
         for author, count in authors_map.items():
-            summary = summary + "<li>%s twitted %d times" % (author, count)
+            summary = summary + "<li><a href='http://twitter.com/%s' target='_blank'>%s</a> twitted since yesterday %d <a href='http://search.twitter.com?q=from:%s' target='_blank'>tweets</a>" % (author.user_name, author, count, author.user_name)
         self.core = summary
         self.save()
 
@@ -389,8 +431,8 @@ class AgentCell(BaseCell):
         fetch only new stories."""
         # todo implement
         pass
-    
-    
+
+
     def process(self, correlation_id=-1):
         log_event("process", "AgentCell", self.id, "Fetching stories", correlation_id)
         self.fetch_stories()
@@ -398,8 +440,10 @@ class AgentCell(BaseCell):
         t = datetime.datetime.now()
         if self.last_summary_delivered_at == None or (t - self.last_summary_delivered_at).days > 1:
             self.send_daily_summary(correlation_id)
-            
-            
+        self.last_processing_cycle = correlation_id
+        self.save()
+
+
     def send_daily_summary(self, correlation_id=-1):
         """Sends the generated summary story for its recipient"""
         # look up a summary

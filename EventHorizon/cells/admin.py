@@ -23,7 +23,7 @@ class AgentCellOptions(admin.ModelAdmin):
 
 
 class StoryCellOptions(admin.ModelAdmin):
-    list_display = ('name', 'core', 'layer', 'location', 'container', 'child_count', 'external_id', 'last_processing_cycle', 'last_processing_time',)
+    list_display = ('name', 'core', 'layer', 'location', 'container', 'x', 'y', 'child_count', 'external_id', 'last_processing_cycle', 'last_processing_time',)
     list_filter = ('layer', 'last_processing_cycle',)
     search_fields = ('name', 'core', 'location',)
     ordering = ('name',)
