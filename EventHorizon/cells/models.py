@@ -417,25 +417,28 @@ class AgentCell(BaseCell):
         story.save()
 
 
-    def fetch_stories(self):
+    def fetch_stories(self, correlation_id=-1):
         """Fetches new stories from the datasource. Uses the last story external id to 
         fetch only new stories."""
-        url = "http://%s/twitter_sensor/?user=%s&password=%s" % (get_domain(), self.user.user_name, self.user.user_password)
-        tweets = urllib.urlopen(url).read()
-        tweets = json.loads(tweets)
-        for key in tweets:
-            try :
-                authors = []
-                authors.append(tweets[key])
-                self.add_read_story(key, authors)
-                self.add_user(tweets[key])
-            except:
-                pass
+        try:
+            url = "http://%s/twitter_sensor/?user=%s&password=%s" % (get_domain(), self.user.user_name, self.user.user_password)
+            tweets = urllib.urlopen(url).read()
+            tweets = json.loads(tweets)
+            for key in tweets:
+                try :
+                    authors = []
+                    authors.append(tweets[key])
+                    self.add_read_story(key, authors)
+                    self.add_user(tweets[key])
+                except:
+                    log_event("fetch_stories_failed", "AgentCell", self.id, "Adding fetched story %s failed, for %s" % (key, self.user), correlation_id)
+        except:
+            log_event("fetch_stories_failed", "AgentCell", self.id, "Failed to fetch stories for %s" % self.user, correlation_id)
 
 
     def process(self, correlation_id=-1):
         log_event("process", "AgentCell", self.id, "Fetching stories", correlation_id)
-        self.fetch_stories()
+        self.fetch_stories(correlation_id)
         # if needed send summary story
         t = datetime.datetime.now()
         if self.last_summary_delivered_at == None or (t - self.last_summary_delivered_at).days > 1:
