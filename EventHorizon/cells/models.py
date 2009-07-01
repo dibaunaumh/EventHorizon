@@ -1,12 +1,12 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from event_log.models import *
-from utils import today, shorten_url, send_twitter_direct_message, calc_distance
+from utils import today, shorten_url, send_twitter_direct_message, calc_distance, get_domain
 import random
 from sqlite3 import IntegrityError
 import datetime
-from django.conf import settings
-from django.contrib.sites.models import Site
+import urllib
+import simplejson as json
 
 
 
@@ -263,10 +263,7 @@ class StoryCell(BaseCell):
 
 
     def get_absolute_url(self):
-        # todo implement properly
-        site = Site.objects.get(pk=settings.SITE_ID)
-        domain = site.domain
-        return "http://%s/cells/view/story/%d" % (domain, self.id)
+        return "http://%s/cells/view/story/%d" % (get_domain(), self.id)
 
 
     def process(self, correlation_id=-1):
@@ -382,12 +379,6 @@ class StoryCell(BaseCell):
         self.save()
 
 
-
-
-
-
-
-
 class AgentCell(BaseCell):
     """Represents a part of the domain, and responsible for interacting
     with the systems representing it, e.g., end users. For that sake, an 
@@ -429,8 +420,17 @@ class AgentCell(BaseCell):
     def fetch_stories(self):
         """Fetches new stories from the datasource. Uses the last story external id to 
         fetch only new stories."""
-        # todo implement
-        pass
+        url = "http://%s/twitter_sensor/?user=%s&password=%s" % (get_domain(), self.user.user_name, self.user.user_password)
+        tweets = urllib.urlopen(url).read()
+        tweets = json.loads(tweets)
+        for key in tweets:
+            try :
+                authors = []
+                authors.append(tweets[key])
+                self.add_read_story(key, authors)
+                self.add_user(tweets[key])
+            except:
+                pass
 
 
     def process(self, correlation_id=-1):

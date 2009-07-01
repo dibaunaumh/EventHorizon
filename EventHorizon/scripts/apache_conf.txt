@@ -1,0 +1,18 @@
+LoadModule python_module modules/mod_python.so
+<Location "/">
+SetHandler python-program
+PythonPath "['<home dir>'] + sys.path"
+PythonHandler django.core.handlers.modpython
+SetEnv DJANGO_SETTINGS_MODULE EventHorizon.settings
+PythonOption django.root /EventHorizon
+PythonDebug Off
+</Location>
+Alias "/site_media" "/var/www/site_media"
+<Location "/site_media">
+SetHandler None
+</Location>
+Alias "/media" "/var/www/media"
+<Location "/media">
+SetHandler None
+</Location>
+

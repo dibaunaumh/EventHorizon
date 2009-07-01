@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-import simplejson
+import simplejson as json
 from models import *
 import twitter
 
@@ -47,6 +47,6 @@ def get_tweets(request):
 
     #tweets = [users, stories]
 
-    return HttpResponse(simplejson.dumps(tweets))
+    return HttpResponse(json.dumps(tweets))
 
 

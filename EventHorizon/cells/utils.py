@@ -4,6 +4,8 @@ import twitter
 import sys
 from event_log.models import log_event
 import math
+from django.conf import settings
+from django.contrib.sites.models import Site
 
 
 ENGINE_TWITTER_USER_NAME = "EventHorizonEng"
@@ -15,6 +17,11 @@ def today():
     t = gmtime()[:3]
     tod = datetime.datetime(t[0], t[1], t[2])
     return tod
+
+
+def get_domain():
+    site = Site.objects.get(pk=settings.SITE_ID)
+    return site.domain
 
 
 def shorten_url(url):
