@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from event_log.models import *
-from utils import today, shorten_url, send_twitter_direct_message, calc_distance, get_domain
+from utils import today, yesterday, shorten_url, send_twitter_direct_message, calc_distance, get_domain
 import random
 from sqlite3 import IntegrityError
 import datetime
@@ -26,6 +26,7 @@ PROCESSING_CYCLE_STATUS_CHOICES = ((PROCESSING_CYCLE_STATUS_NOT_STARTED, "Not st
 
 LAYER_SIZE = 1000
 
+FETCH_STORIES_INTERVAL = 5  # minutes
 
 class LocationCaughtError(ValueError):
     pass
@@ -272,6 +273,7 @@ class StoryCell(BaseCell):
         - changing location to reflect semantic orientation; 
         - generating summary stories."""
         # if needed, update summary stories
+        print "Story %d created at" % self.id, self.created_at
         tod = today()
         if self.created_at >= tod:
             log_event("process", "StoryCell", self.id, "Updating summary stories", correlation_id)
@@ -288,12 +290,13 @@ class StoryCell(BaseCell):
         for x in range(self.x - 5, self.x + 5):
             for y in range(self.y - 5, self.y + 5):
                 if (x, y) != (self.x, self.y):
-                    targets.append( (x, y) )
+                    if 0 < x < LAYER_SIZE and 0 < y < LAYER_SIZE:
+                        targets.append( (x, y) )
         return targets
 
 
     def evaluate_possible_movement_targets(self, possible_targets):
-        """The value of a story location is highest when its distance from its author is 10, 
+        """The value of a story location is highest when its distance from its author is 40, 
            so determine the value of all possible target locations accordingly."""
         result = []
         # find the goal location - near either the author of the story, or its recipient (in case there's no author)
@@ -308,7 +311,7 @@ class StoryCell(BaseCell):
         # move toward the goal location
         if goal_location != None:
             for loc in possible_targets:
-                value = 10 - calc_distance(goal_location, loc)
+                value = LAYER_SIZE - calc_distance(goal_location, loc)
                 result.append( (value, loc)  )
         else :
             result = [ (0, i) for i in possible_targets]
@@ -329,7 +332,7 @@ class StoryCell(BaseCell):
                     self.move_to(max_value_target[1])
                     done = True
                 except LocationCaughtError:
-                    del evaluated_movement_targets[-1] 
+                    del evaluated_movement_targets[-1]
 
 
     def update_summary_stories(self):
@@ -389,6 +392,7 @@ class AgentCell(BaseCell):
     datasource_type = models.CharField(_('datasource type'), max_length=100, help_text=_('the type of datasource, from which to fetch stories, e.g., TWITTER_FRIENDS_TIMELINE'))
     last_story = models.CharField(_('last story'), max_length=100, null=True, blank=True, help_text=_('external id of the last story fetched.'))
     last_summary_delivered_at = models.DateTimeField(_('last summary delivered at'), null=True, blank=True)
+    last_story_fetched_at = models.DateTimeField(_('last story fetched at'), null=True, blank=True)
 
 
     #def __init__(self, name, container, datasource_type, user_name, user_password, user_full_name=None, user_email=None, 
@@ -438,11 +442,13 @@ class AgentCell(BaseCell):
 
     def process(self, correlation_id=-1):
         log_event("process", "AgentCell", self.id, "Fetching stories", correlation_id)
-        self.fetch_stories(correlation_id)
         # if needed send summary story
         t = datetime.datetime.now()
         if self.last_summary_delivered_at == None or (t - self.last_summary_delivered_at).days > 1:
             self.send_daily_summary(correlation_id)
+        few_minutes_ago = t + datetime.timedelta(seconds=-(FETCH_STORIES_INTERVAL*60))
+        if self.last_story_fetched_at == None or self.last_story_fetched_at < few_minutes_ago:
+            self.fetch_stories(correlation_id)
         self.last_processing_cycle = correlation_id
         self.save()
 

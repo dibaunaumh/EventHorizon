@@ -160,6 +160,7 @@ class CellsTest(TestCase):
     	query = StoryCell.objects.filter(is_aggregation=True)
     	for s in query:
     		print s.name, " -----> ", s.core
+    	print "existing_summaries_count", existing_summaries_count
     	self.assertEquals(existing_summaries_count + 2, query.count(), "Expected that 2 summary stories will be created")
     	# analyze the summaries
     	# todo implement

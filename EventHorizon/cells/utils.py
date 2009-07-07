@@ -19,6 +19,12 @@ def today():
     return tod
 
 
+def yesterday():
+    t = gmtime()[:3]
+    yester = datetime.datetime(t[0], t[1], t[2] - 1)
+    return yester
+
+
 def get_domain():
     site = Site.objects.get(pk=settings.SITE_ID)
     return site.domain

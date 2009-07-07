@@ -39,4 +39,4 @@ if __name__ == "__main__":
     log("Processing invoker started")
     while (True):
         invoke()
-        time.sleep(10)
+        time.sleep(3)

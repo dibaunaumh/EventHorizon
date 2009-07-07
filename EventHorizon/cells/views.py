@@ -3,12 +3,14 @@ from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from cells.models import *
+from cells.utils import *
 
 
 
 def home(request):
     """Renders the engine view page"""
     nagents = AgentCell.objects.all().count()
+    domain = get_domain()
     return render_to_response('cells/engine.html', locals())
 
 

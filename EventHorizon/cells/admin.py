@@ -16,7 +16,7 @@ class SocietyCellOptions(admin.ModelAdmin):
     
 
 class AgentCellOptions(admin.ModelAdmin):
-    list_display = ('name', 'core', 'layer', 'location', 'container', 'child_count', 'external_id', 'last_processing_cycle', 'last_processing_time',)
+    list_display = ('name', 'core', 'layer', 'location', 'container', 'child_count', 'external_id', 'last_story_fetched_at', 'last_summary_delivered_at', 'last_processing_cycle', 'last_processing_time',)
     list_filter = ('layer', 'last_processing_cycle',)
     search_fields = ('name', 'core', 'location',)
     ordering = ('name',)

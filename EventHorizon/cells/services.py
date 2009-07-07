@@ -11,8 +11,24 @@ import sys
 CORRELATION_ID = "correlation_id" 
 
 
+def get_all_layers_cells(request):
+    """Returns all cells within a given layer, in JSON format"""
+    data = []
+    for layer in range(4):
+        query = BaseCell.objects.filter(layer=layer)
+        if query.count() > 0:
+            for cell in query:
+                cell.author = "XXX"
+            #layer_cells = [cell.reduce_to_subclass() for cell in query]    # doesn't include basecell attributes
+            data.append(serializers.serialize("json", query))
+        else:
+            data.append("[]")
+    data = "[%s]" % ",".join(data)
+    return HttpResponse(data)
+
+
 def get_layer_cells(request, layer):
-    """Returns all cells within a given layer"""
+    """Returns all cells within a given layer, in JSON format"""
     query = BaseCell.objects.filter(layer=layer)
     data = serializers.serialize("json", query)
     return HttpResponse(data)
