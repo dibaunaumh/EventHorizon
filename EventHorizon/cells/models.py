@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from event_log.models import *
-from utils import today, yesterday, shorten_url, send_twitter_direct_message, calc_distance, get_domain
+from utils import today, yesterday, shorten_url, send_twitter_direct_message, calc_distance, near_by_location, get_domain
 import random
 from sqlite3 import IntegrityError
 import datetime
@@ -310,8 +310,9 @@ class StoryCell(BaseCell):
             goal_location = None
         # move toward the goal location
         if goal_location != None:
+            goal_location = near_by_location(goal_location, min_distance=20, max_distance=40, limit=LAYER_SIZE)
             for loc in possible_targets:
-                value = LAYER_SIZE - calc_distance(goal_location, loc)
+                value = -calc_distance(goal_location, loc)
                 result.append( (value, loc)  )
         else :
             result = [ (0, i) for i in possible_targets]

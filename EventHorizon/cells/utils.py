@@ -6,6 +6,7 @@ from event_log.models import log_event
 import math
 from django.conf import settings
 from django.contrib.sites.models import Site
+import random
 
 
 ENGINE_TWITTER_USER_NAME = "EventHorizonEng"
@@ -63,3 +64,14 @@ def calc_distance(loc0, loc1):
     if loc1[0] == loc0[0]:
         return abs(loc1[1] - loc0[1])
     return int(math.sqrt(abs(loc1[0]-loc0[0])**2 + abs(loc1[1]-loc0[1])**2))
+
+
+def near_by_location(location, min_distance=10, max_distance=100, limit=1000):
+    candidates = []
+    d = max_distance // 2
+    for x in range(location[0] - d, location[0] + d):
+        for y in range(location[1] - d, location[1] + d):
+            if calc_distance(location, (x, y)) >= min_distance:
+                if 0 < x < limit and 0 < y < limit:
+                    candidates.append( (x, y) )
+    return random.choice(candidates)
