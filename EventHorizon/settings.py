@@ -84,4 +84,5 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'event_log',
     'cells',
+    'twitter_sensor',
 )

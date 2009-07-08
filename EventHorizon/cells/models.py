@@ -429,6 +429,7 @@ class AgentCell(BaseCell):
             url = "http://%s/twitter_sensor/?user=%s&password=%s" % (get_domain(), self.user.user_name, self.user.user_password)
             tweets = urllib.urlopen(url).read()
             tweets = json.loads(tweets)
+            print tweets
             for key in tweets:
                 try :
                     authors = []
