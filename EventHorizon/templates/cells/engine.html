@@ -99,7 +99,10 @@ function draw_layer(l) {
 			cell = layer[i];
 	
 	        ctx.beginPath();
-	        ctx.fillStyle = "rgb(50,200,200)";
+	        if (cell.fields.core.split(' ')[0] == "Representing")
+	        	ctx.fillStyle = "rgb(50,200,200)";
+	        else
+	        	ctx.fillStyle = "rgb(50,10,100)";	        
 	        ctx.fillRect (cell.fields.x, cell.fields.y, 5, 5);
 			ctx.closePath();
 		}
