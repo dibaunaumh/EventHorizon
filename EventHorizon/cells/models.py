@@ -5,10 +5,9 @@ from utils import today, yesterday, shorten_url, send_twitter_direct_message, ca
 import random
 from sqlite3 import IntegrityError
 import datetime
-import urllib
 import simplejson as json
-
-
+from django.test.client import Client
+import sys
 
 DATASOURCE_TYPE_TWITTER = "Twitter"
 DATASOURCE_TYPE_REALITY_TREE = "RealityTree"
@@ -26,7 +25,7 @@ PROCESSING_CYCLE_STATUS_CHOICES = ((PROCESSING_CYCLE_STATUS_NOT_STARTED, "Not st
 
 LAYER_SIZE = 1000
 
-FETCH_STORIES_INTERVAL = 5  # minutes
+FETCH_STORIES_INTERVAL = 1  # minutes
 
 class LocationCaughtError(ValueError):
     pass
@@ -403,10 +402,13 @@ class AgentCell(BaseCell):
     #    self.add_user(user_name, user_password, user_full_name, user_email, user_im, user_location, user_bio, user_age, user_gender)
         
         
-    def add_user(self):
+    def add_user(self, user_name):
         """Creates a child User cell"""
         user = UserCell()
-    
+        user.name = user_name
+        user.user_name = user_name
+        user.user_password = "123456"
+        user.save()
     
     def add_read_story(self, text, authors):
         """Creates a StoryCell with the given text & authors. Sets the agent's user as the story recipient."""
@@ -426,10 +428,11 @@ class AgentCell(BaseCell):
         """Fetches new stories from the datasource. Uses the last story external id to 
         fetch only new stories."""
         try:
-            url = "http://%s/twitter_sensor/?user=%s&password=%s" % (get_domain(), self.user.user_name, self.user.user_password)
-            tweets = urllib.urlopen(url).read()
+            #url = "http://%s/twitter_sensor/?user=%s&password=%s" % (get_domain(), self.user.user_name, self.user.user_password)
+            #url = "http://%s/twitter_sensor/?user=%s&password=%s" % (self.get_domain(), self.user.user_name, self.user.user_password)
+            client = Client()
+            tweets = client.get('http://%s/twitter_sensor/' % get_domain(), {'user': self.user.user_name, 'password': self.user.user_password}).content
             tweets = json.loads(tweets)
-            print tweets
             for key in tweets:
                 try :
                     authors = []
@@ -439,6 +442,7 @@ class AgentCell(BaseCell):
                 except:
                     log_event("fetch_stories_failed", "AgentCell", self.id, "Adding fetched story %s failed, for %s" % (key, self.user), correlation_id)
         except:
+            print sys.exc_info()
             log_event("fetch_stories_failed", "AgentCell", self.id, "Failed to fetch stories for %s" % self.user, correlation_id)
 
 
