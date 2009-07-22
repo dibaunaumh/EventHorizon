@@ -1,2 +1,282 @@
 <?xml version="1.0" encoding="utf-8"?>
-<django-objects version="1.0"><object pk="1" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-09 01:55:29</field></object><object pk="2" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-09 02:05:31</field></object><object pk="3" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-09 02:06:21</field></object><object pk="4" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-09 02:31:56</field></object><object pk="5" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-09 02:42:00</field></object><object pk="6" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-09 02:42:08</field></object><object pk="7" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-09 02:42:18</field></object><object pk="8" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:04:38</field></object><object pk="9" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:06:27</field></object><object pk="10" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:06:37</field></object><object pk="11" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:06:47</field></object><object pk="12" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:06:57</field></object><object pk="13" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:07:08</field></object><object pk="14" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:08:20</field></object><object pk="15" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:08:30</field></object><object pk="16" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:08:40</field></object><object pk="17" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:08:50</field></object><object pk="18" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:09:01</field></object><object pk="19" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:09:11</field></object><object pk="20" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:09:21</field></object><object pk="21" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:16:34</field></object><object pk="22" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:16:45</field></object><object pk="23" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:16:55</field></object><object pk="24" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:17:05</field></object><object pk="25" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:20:03</field></object><object pk="26" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:20:13</field></object><object pk="27" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:20:23</field></object><object pk="28" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-11 01:20:34</field></object><object pk="29" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-22 04:50:57</field></object><object pk="30" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-22 04:51:07</field></object><object pk="31" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-22 04:51:17</field></object><object pk="32" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-22 04:51:27</field></object><object pk="33" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-22 04:51:37</field></object><object pk="34" model="cells.processingcycle"><field type="IntegerField" name="status">3</field><field type="DateTimeField" name="last_update">2009-06-23 09:50:02</field></object><object pk="35" model="cells.processingcycle"><field type="IntegerField" name="status">3</field><field type="DateTimeField" name="last_update">2009-06-23 10:55:04</field></object><object pk="36" model="cells.processingcycle"><field type="IntegerField" name="status">3</field><field type="DateTimeField" name="last_update">2009-06-23 10:55:16</field></object><object pk="37" model="cells.processingcycle"><field type="IntegerField" name="status">3</field><field type="DateTimeField" name="last_update">2009-06-23 10:55:28</field></object><object pk="38" model="cells.processingcycle"><field type="IntegerField" name="status">3</field><field type="DateTimeField" name="last_update">2009-06-23 10:55:40</field></object><object pk="39" model="cells.processingcycle"><field type="IntegerField" name="status">3</field><field type="DateTimeField" name="last_update">2009-06-23 10:55:53</field></object><object pk="40" model="cells.processingcycle"><field type="IntegerField" name="status">3</field><field type="DateTimeField" name="last_update">2009-06-23 20:25:28</field></object><object pk="41" model="cells.processingcycle"><field type="IntegerField" name="status">3</field><field type="DateTimeField" name="last_update">2009-06-23 20:26:36</field></object><object pk="42" model="cells.processingcycle"><field type="IntegerField" name="status">3</field><field type="DateTimeField" name="last_update">2009-06-23 20:27:44</field></object><object pk="43" model="cells.processingcycle"><field type="IntegerField" name="status">3</field><field type="DateTimeField" name="last_update">2009-06-23 20:28:37</field></object><object pk="44" model="cells.processingcycle"><field type="IntegerField" name="status">3</field><field type="DateTimeField" name="last_update">2009-06-23 20:29:06</field></object><object pk="45" model="cells.processingcycle"><field type="IntegerField" name="status">3</field><field type="DateTimeField" name="last_update">2009-06-23 20:29:55</field></object><object pk="46" model="cells.processingcycle"><field type="IntegerField" name="status">3</field><field type="DateTimeField" name="last_update">2009-06-23 20:30:58</field></object><object pk="47" model="cells.processingcycle"><field type="IntegerField" name="status">3</field><field type="DateTimeField" name="last_update">2009-06-23 20:32:18</field></object><object pk="48" model="cells.processingcycle"><field type="IntegerField" name="status">3</field><field type="DateTimeField" name="last_update">2009-06-23 20:32:52</field></object><object pk="49" model="cells.processingcycle"><field type="IntegerField" name="status">3</field><field type="DateTimeField" name="last_update">2009-06-23 20:33:49</field></object><object pk="50" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-23 20:36:15</field></object><object pk="51" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-23 20:53:03</field></object><object pk="52" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-23 20:53:13</field></object><object pk="53" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-23 20:53:24</field></object><object pk="54" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-23 20:53:35</field></object><object pk="55" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-23 20:53:45</field></object><object pk="56" model="cells.processingcycle"><field type="IntegerField" name="status">2</field><field type="DateTimeField" name="last_update">2009-06-23 20:53:55</field></object><object pk="1" model="cells.basecell"><field type="CharField" name="name">Twittersphere</field><field type="TextField" name="core">Engine instance modeling the world reflected by Twitter streams</field><field type="IntegerField" name="layer">0</field><field type="IntegerField" name="x">500</field><field type="IntegerField" name="y">500</field><field type="CharField" name="location">(layer-0, 500, 500)</field><field to="cells.basecell" name="container" rel="ManyToOneRel"><None></None></field><field type="IntegerField" name="child_count">0</field><field type="CharField" name="external_id"></field><field type="IntegerField" name="last_processing_cycle">56</field><field type="DateTimeField" name="last_processing_time">2009-06-23 20:53:55</field><field type="DateTimeField" name="last_update">2009-06-23 20:53:55</field><field type="DateTimeField" name="created_at">2009-06-09 01:43:02</field></object><object pk="2" model="cells.basecell"><field type="CharField" name="name">Udi h Bauman</field><field type="TextField" name="core">Representing the human Udi h Bauman</field><field type="IntegerField" name="layer">2</field><field type="IntegerField" name="x">350</field><field type="IntegerField" name="y">200</field><field type="CharField" name="location">(layer-2, 350, 200)</field><field to="cells.basecell" name="container" rel="ManyToOneRel">3</field><field type="IntegerField" name="child_count">0</field><field type="CharField" name="external_id"></field><field type="IntegerField" name="last_processing_cycle">56</field><field type="DateTimeField" name="last_processing_time">2009-06-23 20:53:55</field><field type="DateTimeField" name="last_update">2009-06-23 20:53:55</field><field type="DateTimeField" name="created_at">2009-06-09 01:46:22</field></object><object pk="3" model="cells.basecell"><field type="CharField" name="name">Udi's agent</field><field type="TextField" name="core">Agent for Udi h Bauman</field><field type="IntegerField" name="layer">1</field><field type="IntegerField" name="x">400</field><field type="IntegerField" name="y">600</field><field type="CharField" name="location">(layer-1, 400, 600)</field><field to="cells.basecell" name="container" rel="ManyToOneRel">1</field><field type="IntegerField" name="child_count">0</field><field type="CharField" name="external_id"></field><field type="IntegerField" name="last_processing_cycle">56</field><field type="DateTimeField" name="last_processing_time">2009-06-23 20:53:55</field><field type="DateTimeField" name="last_update">2009-06-23 20:53:55</field><field type="DateTimeField" name="created_at">2009-06-09 01:46:34</field></object><object pk="4" model="cells.basecell"><field type="CharField" name="name">Yay! great review of my company beeTV in @techcrunch!</field><field type="TextField" name="core">Yay! great review of my company beeTV in @techcrunch!</field><field type="IntegerField" name="layer">2</field><field type="IntegerField" name="x">670</field><field type="IntegerField" name="y">450</field><field type="CharField" name="location">(layer-2, 670, 450)</field><field to="cells.basecell" name="container" rel="ManyToOneRel">3</field><field type="IntegerField" name="child_count">0</field><field type="CharField" name="external_id">85848764</field><field type="IntegerField" name="last_processing_cycle">56</field><field type="DateTimeField" name="last_processing_time">2009-06-23 20:53:55</field><field type="DateTimeField" name="last_update">2009-06-23 20:53:55</field><field type="DateTimeField" name="created_at">2009-06-09 01:47:59</field></object><object pk="5" model="cells.basecell"><field type="CharField" name="name">Thanks @nivs, @alisohani!</field><field type="TextField" name="core">Thanks @nivs, @alisohani!</field><field type="IntegerField" name="layer">2</field><field type="IntegerField" name="x">820</field><field type="IntegerField" name="y">430</field><field type="CharField" name="location">(layer-2, 820, 430)</field><field to="cells.basecell" name="container" rel="ManyToOneRel">3</field><field type="IntegerField" name="child_count">0</field><field type="CharField" name="external_id"></field><field type="IntegerField" name="last_processing_cycle">56</field><field type="DateTimeField" name="last_processing_time">2009-06-23 20:53:55</field><field type="DateTimeField" name="last_update">2009-06-23 20:53:55</field><field type="DateTimeField" name="created_at">2009-06-09 01:48:49</field></object><object pk="6" model="cells.basecell"><field type="CharField" name="name">Inna</field><field type="TextField" name="core">Representing Inna Bauman</field><field type="IntegerField" name="layer">2</field><field type="IntegerField" name="x">180</field><field type="IntegerField" name="y">230</field><field type="CharField" name="location">(layer-2, 180, 230)</field><field to="cells.basecell" name="container" rel="ManyToOneRel"><None></None></field><field type="IntegerField" name="child_count">0</field><field type="CharField" name="external_id">987979</field><field type="IntegerField" name="last_processing_cycle"><None></None></field><field type="DateTimeField" name="last_processing_time">2009-06-23 09:38:42</field><field type="DateTimeField" name="last_update">2009-06-23 09:38:42</field><field type="DateTimeField" name="created_at">2009-06-23 09:38:42</field></object><object pk="7" model="cells.basecell"><field type="CharField" name="name">Inna's Agent</field><field type="TextField" name="core">Agent representing Inna Bauman</field><field type="IntegerField" name="layer">1</field><field type="IntegerField" name="x">429</field><field type="IntegerField" name="y">529</field><field type="CharField" name="location">(layer-1, 429, 529)</field><field to="cells.basecell" name="container" rel="ManyToOneRel">1</field><field type="IntegerField" name="child_count">0</field><field type="CharField" name="external_id"></field><field type="IntegerField" name="last_processing_cycle">56</field><field type="DateTimeField" name="last_processing_time">2009-06-23 20:53:55</field><field type="DateTimeField" name="last_update">2009-06-23 20:53:55</field><field type="DateTimeField" name="created_at">2009-06-23 09:40:19</field></object><object pk="8" model="cells.basecell"><field type="CharField" name="name">Watching Brilliant Noise - short film using NASA images of the Sun</field><field type="TextField" name="core">Watching Brilliant Noise - short film using NASA images of the Sun</field><field type="IntegerField" name="layer">2</field><field type="IntegerField" name="x">936</field><field type="IntegerField" name="y">271</field><field type="CharField" name="location">(layer-2, 936, 271)</field><field to="cells.basecell" name="container" rel="ManyToOneRel">3</field><field type="IntegerField" name="child_count">0</field><field type="CharField" name="external_id">23131322</field><field type="IntegerField" name="last_processing_cycle">56</field><field type="DateTimeField" name="last_processing_time">2009-06-23 20:53:55</field><field type="DateTimeField" name="last_update">2009-06-23 20:53:55</field><field type="DateTimeField" name="created_at">2009-06-23 09:43:29</field></object><object pk="9" model="cells.basecell"><field type="CharField" name="name">John Hodgins testing Obama's nerdiness</field><field type="TextField" name="core">John Hodgins testing Obama's nerdiness</field><field type="IntegerField" name="layer">2</field><field type="IntegerField" name="x">629</field><field type="IntegerField" name="y">603</field><field type="CharField" name="location">(layer-2, 629, 603)</field><field to="cells.basecell" name="container" rel="ManyToOneRel">3</field><field type="IntegerField" name="child_count">0</field><field type="CharField" name="external_id">78577987</field><field type="IntegerField" name="last_processing_cycle">56</field><field type="DateTimeField" name="last_processing_time">2009-06-23 20:53:55</field><field type="DateTimeField" name="last_update">2009-06-23 20:53:55</field><field type="DateTimeField" name="created_at">2009-06-23 09:46:11</field></object><object pk="10" model="cells.basecell"><field type="CharField" name="name">Don't understand why people sleep at night</field><field type="TextField" name="core">Don't understand why people sleep at night</field><field type="IntegerField" name="layer">2</field><field type="IntegerField" name="x">830</field><field type="IntegerField" name="y">902</field><field type="CharField" name="location">(layer-2, 830, 902)</field><field to="cells.basecell" name="container" rel="ManyToOneRel">7</field><field type="IntegerField" name="child_count">0</field><field type="CharField" name="external_id">189128128</field><field type="IntegerField" name="last_processing_cycle">56</field><field type="DateTimeField" name="last_processing_time">2009-06-23 20:53:55</field><field type="DateTimeField" name="last_update">2009-06-23 20:53:55</field><field type="DateTimeField" name="created_at">2009-06-23 09:47:17</field></object><object pk="11" model="cells.basecell"><field type="CharField" name="name">Inna's summary for Tue Jun 23 00:00:00 2009</field><field type="TextField" name="core">&lt;h3&gt;Summary for [Agent] Inna&lt;/h3&gt;&lt;li&gt;[Agent] Udi h Bauman twitted 2 times</field><field type="IntegerField" name="layer">2</field><field type="IntegerField" name="x">454</field><field type="IntegerField" name="y">793</field><field type="CharField" name="location">(layer-2, 454, 793)</field><field to="cells.basecell" name="container" rel="ManyToOneRel">3</field><field type="IntegerField" name="child_count">0</field><field type="CharField" name="external_id"><None></None></field><field type="IntegerField" name="last_processing_cycle">56</field><field type="DateTimeField" name="last_processing_time">2009-06-23 20:53:55</field><field type="DateTimeField" name="last_update">2009-06-23 20:53:55</field><field type="DateTimeField" name="created_at">2009-06-23 09:50:02</field></object><object pk="12" model="cells.basecell"><field type="CharField" name="name">Udi h Bauman's summary for Tue Jun 23 00:00:00 2009</field><field type="TextField" name="core">&lt;h3&gt;Summary for [Agent] Udi h Bauman&lt;/h3&gt;&lt;li&gt;[Agent] Inna twitted 1 times</field><field type="IntegerField" name="layer">2</field><field type="IntegerField" name="x">998</field><field type="IntegerField" name="y">708</field><field type="CharField" name="location">(layer-2, 998, 708)</field><field to="cells.basecell" name="container" rel="ManyToOneRel">7</field><field type="IntegerField" name="child_count">0</field><field type="CharField" name="external_id"><None></None></field><field type="IntegerField" name="last_processing_cycle">56</field><field type="DateTimeField" name="last_processing_time">2009-06-23 20:53:55</field><field type="DateTimeField" name="last_update">2009-06-23 20:53:55</field><field type="DateTimeField" name="created_at">2009-06-23 20:36:15</field></object><object pk="1" model="cells.societycell"><field type="CharField" name="domain_name">TwitterSphere Domain</field><field type="CharField" name="domain_description"></field><field type="CharField" name="domain_url"></field></object><object pk="2" model="cells.usercell"><field type="CharField" name="user_name">dibau_naum_h</field><field type="CharField" name="user_password">17241804</field><field type="CharField" name="user_full_name">Udi h Bauman</field><field type="CharField" name="user_email">dibaunaumh@gmail.com</field><field type="CharField" name="user_im"></field><field type="CharField" name="user_location">Ashdod, Israel</field><field type="CharField" name="user_bio">I believe in the magic flute</field><field type="IntegerField" name="user_age">35</field><field type="CharField" name="user_gender">M</field></object><object pk="6" model="cells.usercell"><field type="CharField" name="user_name">inna_mac</field><field type="CharField" name="user_password">sympa11</field><field type="CharField" name="user_full_name">Inna Bauman</field><field type="CharField" name="user_email">inna.bauman@gmail.com</field><field type="CharField" name="user_im"></field><field type="CharField" name="user_location"></field><field type="CharField" name="user_bio"></field><field type="IntegerField" name="user_age"><None></None></field><field type="CharField" name="user_gender">F</field></object><object pk="4" model="cells.storycell"><field type="BooleanField" name="is_aggregation">False</field><field to="cells.usercell" name="authors" rel="ManyToManyRel"></field><field to="cells.usercell" name="recipients" rel="ManyToManyRel"></field><field to="cells.storycell" name="aggregated_stories" rel="ManyToManyRel"></field></object><object pk="5" model="cells.storycell"><field type="BooleanField" name="is_aggregation">False</field><field to="cells.usercell" name="authors" rel="ManyToManyRel"></field><field to="cells.usercell" name="recipients" rel="ManyToManyRel"></field><field to="cells.storycell" name="aggregated_stories" rel="ManyToManyRel"></field></object><object pk="8" model="cells.storycell"><field type="BooleanField" name="is_aggregation">False</field><field to="cells.usercell" name="authors" rel="ManyToManyRel"><object pk="2"></object></field><field to="cells.usercell" name="recipients" rel="ManyToManyRel"><object pk="6"></object></field><field to="cells.storycell" name="aggregated_stories" rel="ManyToManyRel"><object pk="11"></object></field></object><object pk="9" model="cells.storycell"><field type="BooleanField" name="is_aggregation">False</field><field to="cells.usercell" name="authors" rel="ManyToManyRel"><object pk="2"></object></field><field to="cells.usercell" name="recipients" rel="ManyToManyRel"><object pk="6"></object></field><field to="cells.storycell" name="aggregated_stories" rel="ManyToManyRel"><object pk="11"></object></field></object><object pk="10" model="cells.storycell"><field type="BooleanField" name="is_aggregation">False</field><field to="cells.usercell" name="authors" rel="ManyToManyRel"><object pk="6"></object></field><field to="cells.usercell" name="recipients" rel="ManyToManyRel"><object pk="2"></object></field><field to="cells.storycell" name="aggregated_stories" rel="ManyToManyRel"><object pk="12"></object></field></object><object pk="11" model="cells.storycell"><field type="BooleanField" name="is_aggregation">True</field><field to="cells.usercell" name="authors" rel="ManyToManyRel"></field><field to="cells.usercell" name="recipients" rel="ManyToManyRel"><object pk="6"></object></field><field to="cells.storycell" name="aggregated_stories" rel="ManyToManyRel"><object pk="8"></object><object pk="9"></object></field></object><object pk="12" model="cells.storycell"><field type="BooleanField" name="is_aggregation">True</field><field to="cells.usercell" name="authors" rel="ManyToManyRel"></field><field to="cells.usercell" name="recipients" rel="ManyToManyRel"><object pk="2"></object></field><field to="cells.storycell" name="aggregated_stories" rel="ManyToManyRel"><object pk="10"></object></field></object><object pk="3" model="cells.agentcell"><field to="cells.usercell" name="user" rel="ManyToOneRel">2</field><field type="CharField" name="datasource_type">TWITTER_FRIENDS_TIMELINE</field><field type="CharField" name="last_story"></field><field type="DateTimeField" name="last_summary_delivered_at"><None></None></field></object><object pk="7" model="cells.agentcell"><field to="cells.usercell" name="user" rel="ManyToOneRel">6</field><field type="CharField" name="datasource_type">TWITTER_FRIENDS_TIMELINE</field><field type="CharField" name="last_story"></field><field type="DateTimeField" name="last_summary_delivered_at"><None></None></field></object></django-objects>
+<django-objects version="1.0">
+    <object pk="1" model="cells.processingcycle">
+        <field type="IntegerField" name="status">0</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:30:27</field>
+    </object>
+    <object pk="2" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:31:07</field>
+    </object>
+    <object pk="3" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:31:10</field>
+    </object>
+    <object pk="4" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:31:13</field>
+    </object>
+    <object pk="5" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:31:17</field>
+    </object>
+    <object pk="6" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:31:20</field>
+    </object>
+    <object pk="7" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:31:23</field>
+    </object>
+    <object pk="8" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:31:27</field>
+    </object>
+    <object pk="9" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:31:30</field>
+    </object>
+    <object pk="10" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:31:33</field>
+    </object>
+    <object pk="11" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:31:37</field>
+    </object>
+    <object pk="12" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:31:40</field>
+    </object>
+    <object pk="13" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:31:43</field>
+    </object>
+    <object pk="14" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:31:47</field>
+    </object>
+    <object pk="15" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:31:50</field>
+    </object>
+    <object pk="16" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:31:54</field>
+    </object>
+    <object pk="17" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:31:57</field>
+    </object>
+    <object pk="18" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:32:01</field>
+    </object>
+    <object pk="19" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:32:05</field>
+    </object>
+    <object pk="20" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:32:08</field>
+    </object>
+    <object pk="21" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:32:11</field>
+    </object>
+    <object pk="22" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:32:15</field>
+    </object>
+    <object pk="23" model="cells.processingcycle">
+        <field type="IntegerField" name="status">2</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:32:18</field>
+    </object>
+    <object pk="1" model="cells.basecell">
+        <field type="CharField" name="name">Twittersphere</field>
+        <field type="TextField" name="core">Representing the Twittersphere</field>
+        <field type="IntegerField" name="layer">0</field>
+        <field type="CharField" name="cell_type">SocietyCell</field>
+        <field type="IntegerField" name="x">500</field>
+        <field type="IntegerField" name="y">500</field>
+        <field type="CharField" name="location">(layer-0, 500, 500)</field>
+        <field to="cells.basecell" name="container" rel="ManyToOneRel"><None></None></field>
+        <field type="IntegerField" name="child_count">0</field>
+        <field type="CharField" name="external_id"></field>
+        <field type="IntegerField" name="last_processing_cycle"><None></None></field>
+        <field type="DateTimeField" name="last_processing_time">2009-07-20 00:18:44</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:18:44</field>
+        <field type="DateTimeField" name="created_at">2009-07-20 00:18:44</field>
+    </object>
+    <object pk="2" model="cells.basecell">
+        <field type="CharField" name="name">Udi h Bauman</field>
+        <field type="TextField" name="core">Representing the person Udi h Bauman</field>
+        <field type="IntegerField" name="layer">2</field>
+        <field type="CharField" name="cell_type">UserCell</field>
+        <field type="IntegerField" name="x">450</field>
+        <field type="IntegerField" name="y">560</field>
+        <field type="CharField" name="location">(layer-2, 450, 560)</field>
+        <field to="cells.basecell" name="container" rel="ManyToOneRel">3</field>
+        <field type="IntegerField" name="child_count">0</field>
+        <field type="CharField" name="external_id">987979</field>
+        <field type="IntegerField" name="last_processing_cycle">23</field>
+        <field type="DateTimeField" name="last_processing_time">2009-07-20 00:32:18</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:32:18</field>
+        <field type="DateTimeField" name="created_at">2009-07-20 00:23:27</field>
+    </object>
+    <object pk="3" model="cells.basecell">
+        <field type="CharField" name="name">Udi's agent</field>
+        <field type="TextField" name="core">Agent creating value for the person Udi h Bauman</field>
+        <field type="IntegerField" name="layer">1</field>
+        <field type="CharField" name="cell_type">AgentCell</field>
+        <field type="IntegerField" name="x">800</field>
+        <field type="IntegerField" name="y">300</field>
+        <field type="CharField" name="location">(layer-1, 800, 300)</field>
+        <field to="cells.basecell" name="container" rel="ManyToOneRel">1</field>
+        <field type="IntegerField" name="child_count">0</field>
+        <field type="CharField" name="external_id"></field>
+        <field type="IntegerField" name="last_processing_cycle">23</field>
+        <field type="DateTimeField" name="last_processing_time">2009-07-20 00:32:18</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:32:18</field>
+        <field type="DateTimeField" name="created_at">2009-07-20 00:23:59</field>
+    </object>
+    <object pk="4" model="cells.basecell">
+        <field type="CharField" name="name">Inna Bauman</field>
+        <field type="TextField" name="core">Representing the person Inna Bauman</field>
+        <field type="IntegerField" name="layer">2</field>
+        <field type="CharField" name="cell_type">UserCell</field>
+        <field type="IntegerField" name="x">820</field>
+        <field type="IntegerField" name="y">410</field>
+        <field type="CharField" name="location">(layer-2, 820, 410)</field>
+        <field to="cells.basecell" name="container" rel="ManyToOneRel">5</field>
+        <field type="IntegerField" name="child_count">0</field>
+        <field type="CharField" name="external_id"></field>
+        <field type="IntegerField" name="last_processing_cycle">23</field>
+        <field type="DateTimeField" name="last_processing_time">2009-07-20 00:32:18</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:32:18</field>
+        <field type="DateTimeField" name="created_at">2009-07-20 00:26:38</field>
+    </object>
+    <object pk="5" model="cells.basecell">
+        <field type="CharField" name="name">Inna's Agent</field>
+        <field type="TextField" name="core">Agent creating value for the person Inna Bauman</field>
+        <field type="IntegerField" name="layer">1</field>
+        <field type="CharField" name="cell_type">AgentCell</field>
+        <field type="IntegerField" name="x">289</field>
+        <field type="IntegerField" name="y">719</field>
+        <field type="CharField" name="location">(layer-1, 289, 719)</field>
+        <field to="cells.basecell" name="container" rel="ManyToOneRel">1</field>
+        <field type="IntegerField" name="child_count">0</field>
+        <field type="CharField" name="external_id"></field>
+        <field type="IntegerField" name="last_processing_cycle">23</field>
+        <field type="DateTimeField" name="last_processing_time">2009-07-20 00:32:18</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:32:18</field>
+        <field type="DateTimeField" name="created_at">2009-07-20 00:26:41</field>
+    </object>
+    <object pk="6" model="cells.basecell">
+        <field type="CharField" name="name">Yay! great review of my company beeTV in @techcrunch!</field>
+        <field type="TextField" name="core">Yay! great review of my company beeTV in @techcrunch!</field>
+        <field type="IntegerField" name="layer">2</field>
+        <field type="CharField" name="cell_type">StoryCell</field>
+        <field type="IntegerField" name="x">435</field>
+        <field type="IntegerField" name="y">553</field>
+        <field type="CharField" name="location">(layer-2, 435, 553)</field>
+        <field to="cells.basecell" name="container" rel="ManyToOneRel">3</field>
+        <field type="IntegerField" name="child_count">0</field>
+        <field type="CharField" name="external_id">8172368</field>
+        <field type="IntegerField" name="last_processing_cycle">23</field>
+        <field type="DateTimeField" name="last_processing_time">2009-07-20 00:32:18</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:32:18</field>
+        <field type="DateTimeField" name="created_at">2009-07-20 00:28:01</field>
+    </object>
+    <object pk="7" model="cells.basecell">
+        <field type="CharField" name="name">Thanks @nivs, @alisohani!</field>
+        <field type="TextField" name="core">Thanks @nivs, @alisohani!</field>
+        <field type="IntegerField" name="layer">2</field>
+        <field type="CharField" name="cell_type">StoryCell</field>
+        <field type="IntegerField" name="x">870</field>
+        <field type="IntegerField" name="y">625</field>
+        <field type="CharField" name="location">(layer-2, 870, 625)</field>
+        <field to="cells.basecell" name="container" rel="ManyToOneRel">3</field>
+        <field type="IntegerField" name="child_count">0</field>
+        <field type="CharField" name="external_id">234234</field>
+        <field type="IntegerField" name="last_processing_cycle">23</field>
+        <field type="DateTimeField" name="last_processing_time">2009-07-20 00:32:18</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:32:18</field>
+        <field type="DateTimeField" name="created_at">2009-07-20 00:29:09</field>
+    </object>
+    <object pk="8" model="cells.basecell">
+        <field type="CharField" name="name">Don't understand why people sleep at night</field>
+        <field type="TextField" name="core">Don't understand why people sleep at night</field>
+        <field type="IntegerField" name="layer">2</field>
+        <field type="CharField" name="cell_type">StoryCell</field>
+        <field type="IntegerField" name="x">803</field>
+        <field type="IntegerField" name="y">423</field>
+        <field type="CharField" name="location">(layer-2, 803, 423)</field>
+        <field to="cells.basecell" name="container" rel="ManyToOneRel">5</field>
+        <field type="IntegerField" name="child_count">0</field>
+        <field type="CharField" name="external_id">24239487</field>
+        <field type="IntegerField" name="last_processing_cycle">23</field>
+        <field type="DateTimeField" name="last_processing_time">2009-07-20 00:32:18</field>
+        <field type="DateTimeField" name="last_update">2009-07-20 00:32:18</field>
+        <field type="DateTimeField" name="created_at">2009-07-20 00:29:58</field>
+    </object>
+    <object pk="1" model="cells.societycell">
+        <field type="CharField" name="domain_name">Twitter</field>
+        <field type="CharField" name="domain_description"></field>
+        <field type="CharField" name="domain_url"></field>
+    </object>
+    <object pk="2" model="cells.usercell">
+        <field type="CharField" name="user_name">dibau_naum_h</field>
+        <field type="CharField" name="user_password">17241804</field>
+        <field type="CharField" name="user_full_name">Udi h Bauman</field>
+        <field type="CharField" name="user_email">dibaunaumh@gmail.com</field>
+        <field type="CharField" name="user_im">dibaunaumh@gmail.com</field>
+        <field type="CharField" name="user_location">Ashdod, Israel</field>
+        <field type="CharField" name="user_bio">I believe in the magic flute</field>
+        <field type="IntegerField" name="user_age">35</field>
+        <field type="CharField" name="user_gender">M</field>
+    </object>
+    <object pk="4" model="cells.usercell">
+        <field type="CharField" name="user_name">inna_mac</field>
+        <field type="CharField" name="user_password">thbv1979</field>
+        <field type="CharField" name="user_full_name">Inna Bauman</field>
+        <field type="CharField" name="user_email">inna.bauman@gmail.com</field>
+        <field type="CharField" name="user_im"></field>
+        <field type="CharField" name="user_location"></field>
+        <field type="CharField" name="user_bio"></field>
+        <field type="IntegerField" name="user_age">29</field>
+        <field type="CharField" name="user_gender">F</field>
+    </object>
+    <object pk="6" model="cells.storycell">
+        <field type="BooleanField" name="is_aggregation">False</field>
+        <field to="cells.usercell" name="authors" rel="ManyToManyRel"><object pk="2"></object></field>
+        <field to="cells.usercell" name="recipients" rel="ManyToManyRel"></field>
+        <field to="cells.storycell" name="aggregated_stories" rel="ManyToManyRel"></field>
+    </object>
+    <object pk="7" model="cells.storycell">
+        <field type="BooleanField" name="is_aggregation">False</field>
+        <field to="cells.usercell" name="authors" rel="ManyToManyRel"><object pk="2"></object></field>
+        <field to="cells.usercell" name="recipients" rel="ManyToManyRel"></field>
+        <field to="cells.storycell" name="aggregated_stories" rel="ManyToManyRel"></field>
+    </object>
+    <object pk="8" model="cells.storycell">
+        <field type="BooleanField" name="is_aggregation">False</field>
+        <field to="cells.usercell" name="authors" rel="ManyToManyRel"><object pk="4"></object></field>
+        <field to="cells.usercell" name="recipients" rel="ManyToManyRel"></field>
+        <field to="cells.storycell" name="aggregated_stories" rel="ManyToManyRel"></field>
+    </object>
+    <object pk="3" model="cells.agentcell">
+        <field to="cells.usercell" name="user" rel="ManyToOneRel">2</field>
+        <field type="CharField" name="datasource_type">TWITTER_FRIENDS_TIMELINE</field>
+        <field type="CharField" name="last_story"></field>
+        <field type="DateTimeField" name="last_summary_delivered_at"><None></None></field>
+        <field type="DateTimeField" name="last_story_fetched_at">2009-07-20 08:30:58</field>
+    </object>
+    <object pk="5" model="cells.agentcell">
+        <field to="cells.usercell" name="user" rel="ManyToOneRel">4</field>
+        <field type="CharField" name="datasource_type">TWITTER_FRIENDS_TIMELINE</field>
+        <field type="CharField" name="last_story"></field>
+        <field type="DateTimeField" name="last_summary_delivered_at"><None></None></field>
+        <field type="DateTimeField" name="last_story_fetched_at">2009-07-20 08:30:51</field>
+    </object>
+</django-objects>

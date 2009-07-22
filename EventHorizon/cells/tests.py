@@ -12,6 +12,7 @@ from time import gmtime
 import sys
 from django.test import Client
 from django.core.urlresolvers import reverse
+import simplejson as json
 
 
 class UtilsTest(TestCase):
@@ -55,6 +56,7 @@ class CellsTest(TestCase):
             self.society_cell.name = "Test domain"
             self.society_cell.layer = 0
             self.society_cell.core = "A test society"
+            self.society_cell.cell_type = "SocietyCell"
             self.society_cell.move_to_random_location()
     
     
@@ -189,9 +191,34 @@ class CellsTest(TestCase):
 
 
     def test_cells_movement(self):
-        story = StoryCell.objects.all()[3]
+        story = StoryCell.objects.all()[2]
         x = story.x
         y = story.y
         self.society_cell.process()
-        story = StoryCell.objects.all()[3]
+        story = StoryCell.objects.all()[2]
         self.assertTrue(x != story.x or y != story.y, "Story cell didn't move")
+
+
+    def test_get_cells(self):
+        client = Client()
+        # todo use reverse
+        response = client.get("/cells/")
+        layers_json = response.context.dicts[-1]['data']
+        layers = json.loads(layers_json)
+        print "layers=", layers
+        self.assertEquals(4, len(layers), "Expected to receive 4 layers of cells")
+
+
+    def test_get_cells_with_filter(self):
+        client = Client()
+        # todo use reverse
+        response = client.get("/cells/?q=John")
+        layers_json = response.context.dicts[-1]['data']
+        layers = json.loads(layers_json)
+        print "layers=", layers
+        self.assertEquals(4, len(layers), "Expected to receive 4 layers of cells")
+        for layer in layers:
+            for cell in layer:
+                self.assertTrue(cell["fields"]["core"].find("John") >= 0)
+
+

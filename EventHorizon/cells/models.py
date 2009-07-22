@@ -5,9 +5,12 @@ from utils import today, yesterday, shorten_url, send_twitter_direct_message, ca
 import random
 from sqlite3 import IntegrityError
 import datetime
+import urllib
 import simplejson as json
 from django.test.client import Client
 import sys
+
+
 
 DATASOURCE_TYPE_TWITTER = "Twitter"
 DATASOURCE_TYPE_REALITY_TREE = "RealityTree"
@@ -25,7 +28,7 @@ PROCESSING_CYCLE_STATUS_CHOICES = ((PROCESSING_CYCLE_STATUS_NOT_STARTED, "Not st
 
 LAYER_SIZE = 1000
 
-FETCH_STORIES_INTERVAL = 1  # minutes
+FETCH_STORIES_INTERVAL = 5  # minutes
 
 class LocationCaughtError(ValueError):
     pass
@@ -49,6 +52,7 @@ class BaseCell(models.Model):
     name = models.CharField(_('name'), max_length=1000, db_index=True, help_text='The name generated for this cell')
     core = models.TextField(_('core'), help_text=_('The content of a cell'))
     layer = models.IntegerField(_('layer'), help_text=_('The layer in which the cell acts'))
+    cell_type = models.CharField(_('cell type'), max_length=50, db_index=True, editable=False, help_text=_('A sub-class discriminator field'))
     x = models.IntegerField(_('x'), db_index=True, help_text=_('The x coordinate of the cell within its layer'))
     y = models.IntegerField(_('y'), db_index=True, help_text=_('The y coordinate of the cell within its layer'))
     location = models.CharField(_('location'), db_index=True, unique=True, max_length=30, help_text=_("A representation of the cell's location (e.g., (layer-0, 765, 678) ), used mainly to prevent collisions between cells, using the database uniqueness constraint."))
@@ -63,7 +67,7 @@ class BaseCell(models.Model):
     
     class Meta:
         abstract = True
-        
+    
     
     #def __init__(self, name="Untitled", container=None, core=None, external_id=None):
     #    self.name = name
@@ -79,7 +83,7 @@ class BaseCell(models.Model):
     
     def get_location(self):
         return (self.x, self.y)
-
+    
     
     def move_to_random_location(self):
         """Tries to create the cell in a random location inside its layer. If the location isn't empty, retries in another location."""
@@ -90,7 +94,7 @@ class BaseCell(models.Model):
             except:
                 # assuming failing due to uniqueness constraint violation. 
                 trials = trials - 1
-
+    
     
     def move_to(self, location):
         """Receives a 2d coordinates of a location as tuple of 2 integers, & tries to set the cell's location to these coordinates. Returns an exception if the location is caught"""
@@ -119,18 +123,17 @@ class BaseCell(models.Model):
     
     
     def reduce_to_subclass(self):
-        """Hack: tries to load the instance from a subclass of BaseCell, according to its layer"""
-        if self.layer == 0:
+        """Hack: tries to load the instance from a subclass of BaseCell, according to its cell_type discriminator"""
+        if self.cell_type == "SocietyCell":
             return SocietyCell.objects.get(pk=self.id)
-        elif self.layer == 1:
+        elif self.cell_type == "AgentCell":
             return AgentCell.objects.get(pk=self.id)
-        elif self.layer == 2:
-            try:
-                return UserCell.objects.get(pk=self.id)
-            except:
+        elif self.cell_type == "UserCell":
+            return UserCell.objects.get(pk=self.id)
+        elif self.cell_type == "StoryCell":
                 return StoryCell.objects.get(pk=self.id)
-            
-
+    
+    
     def process(self, process_cycle_id=-1):
         """Recursively invokes the processing of the child cells."""
         # todo create a processing cycle, & use its id as correlation id
@@ -174,25 +177,29 @@ class SocietyCell(BaseCell):
     #class Meta(BaseCell.Meta):
     #    verbose_name = _("society cell")
     #    verbose_name_plural = _("society cells")
-        
+
 
     def add_agent(self, user_name, user_password, datasource_type):
         """Creates a child agent cell"""
         # 1st create a user
         user = UserCell()
+        user.cell_type = "UserCell"
         user.name = user_name
         user.user_name = user_name
         user.user_password = user_password
         user.layer = self.layer + 2
+        user.cell_type = "UserCell"
         user.move_to_random_location()
         # now create an agent for that user
         name = u"%s %s" % (_("Agent for"), user_name)
         agent = AgentCell()
+        agent.cell_type = "AgentCell"
         agent.container = self
         agent.user = user
         agent.name = name
         agent.datasource_type = datasource_type
         agent.layer = self.layer + 1
+        agent.cell_type = "AgentCell"
         agent.move_to_random_location()
         user.container = agent
         return agent
@@ -352,10 +359,12 @@ class StoryCell(BaseCell):
             else:
                 # if not found, create one
                 summary_story = StoryCell()
+                summary_story.cell_type = "StoryCell"
                 summary_story.name = "%s's %s %s" % (user.name, _('summary for'), tod.strftime("%c"))
                 summary_story.container = self.container
                 summary_story.layer = self.layer
                 summary_story.is_aggregation = True
+                summary_story.cell_type = "StoryCell"
                 summary_story.move_to_random_location()
                 summary_story.recipients.add(user)
             # add the story to the summary
@@ -409,10 +418,12 @@ class AgentCell(BaseCell):
         user.user_name = user_name
         user.user_password = "123456"
         user.save()
+
     
     def add_read_story(self, text, authors):
         """Creates a StoryCell with the given text & authors. Sets the agent's user as the story recipient."""
         story = StoryCell()
+        story.cell_type = "StoryCell"
         story.name = text
         story.container = self
         story.core = text
@@ -429,10 +440,11 @@ class AgentCell(BaseCell):
         fetch only new stories."""
         try:
             #url = "http://%s/twitter_sensor/?user=%s&password=%s" % (get_domain(), self.user.user_name, self.user.user_password)
-            #url = "http://%s/twitter_sensor/?user=%s&password=%s" % (self.get_domain(), self.user.user_name, self.user.user_password)
+            #tweets = urllib.urlopen(url).read()
             client = Client()
             tweets = client.get('http://%s/twitter_sensor/' % get_domain(), {'user': self.user.user_name, 'password': self.user.user_password}).content
             tweets = json.loads(tweets)
+            print tweets
             for key in tweets:
                 try :
                     authors = []

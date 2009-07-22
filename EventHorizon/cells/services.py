@@ -13,18 +13,24 @@ CORRELATION_ID = "correlation_id"
 
 def get_all_layers_cells(request):
     """Returns all cells within a given layer, in JSON format"""
+    if "q" in request.GET:
+        filter_keywords = request.GET["q"]
+    else:
+        filter_keywords = None
+    print "get cells with filter %s" % filter_keywords
     data = []
     for layer in range(4):
-        query = BaseCell.objects.filter(layer=layer)
+        if filter_keywords:
+            query = BaseCell.objects.filter(layer=layer, core__contains=filter_keywords)
+        else:
+            query = BaseCell.objects.filter(layer=layer)
         if query.count() > 0:
-            for cell in query:
-                cell.author = "XXX"
             #layer_cells = [cell.reduce_to_subclass() for cell in query]    # doesn't include basecell attributes
             data.append(serializers.serialize("json", query))
         else:
             data.append("[]")
     data = "[%s]" % ",".join(data)
-    return HttpResponse(data)
+    return render_to_response("cells/cells.json", locals())
 
 
 def get_layer_cells(request, layer):
