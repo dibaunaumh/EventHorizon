@@ -43,7 +43,7 @@ def get_tweets(request):
         story.in_reply_to_user = reply_to_user
         story.last_update = post.created_at
         
-        tweets[story.text] = user.name;
+        tweets[story.text] = (user.name, post.id);
 
     #tweets = [users, stories]
 

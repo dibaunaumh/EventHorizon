@@ -448,13 +448,15 @@ class AgentCell(BaseCell):
             for key in tweets:
                 try :
                     authors = []
-                    authors.append(tweets[key])
+                    for story in StoryCell.objects.all():
+                        if story.core == key:
+                            return
+                    authors.append(tweets[key][0])
                     self.add_read_story(key, authors)
-                    self.add_user(tweets[key])
+                    self.add_user(tweets[key][0])
                 except:
                     log_event("fetch_stories_failed", "AgentCell", self.id, "Adding fetched story %s failed, for %s" % (key, self.user), correlation_id)
         except:
-            print sys.exc_info()
             log_event("fetch_stories_failed", "AgentCell", self.id, "Failed to fetch stories for %s" % self.user, correlation_id)
 
 
