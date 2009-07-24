@@ -220,6 +220,38 @@
         <field type="DateTimeField" name="last_update">2009-07-20 00:32:18</field>
         <field type="DateTimeField" name="created_at">2009-07-20 00:29:58</field>
     </object>
+    <object pk="9" model="cells.basecell">
+        <field type="CharField" name="name">Arshavski Alex</field>
+        <field type="TextField" name="core">Representing the person Arshavski Alexander</field>
+        <field type="IntegerField" name="layer">2</field>
+        <field type="CharField" name="cell_type"></field>
+        <field type="IntegerField" name="x">400</field>
+        <field type="IntegerField" name="y">200</field>
+        <field type="CharField" name="location">(layer-2, 400, 200)</field>
+        <field to="cells.basecell" name="container" rel="ManyToOneRel">9</field>
+        <field type="IntegerField" name="child_count">0</field>
+        <field type="CharField" name="external_id"></field>
+        <field type="IntegerField" name="last_processing_cycle"><None></None></field>
+        <field type="DateTimeField" name="last_processing_time">2009-07-24 05:15:25</field>
+        <field type="DateTimeField" name="last_update">2009-07-24 05:15:25</field>
+        <field type="DateTimeField" name="created_at">2009-07-24 05:12:03</field>
+    </object>
+    <object pk="10" model="cells.basecell">
+        <field type="CharField" name="name">Alex's agent</field>
+        <field type="TextField" name="core">Agent creating value for the person Arshavski Alexander</field>
+        <field type="IntegerField" name="layer">1</field>
+        <field type="CharField" name="cell_type"></field>
+        <field type="IntegerField" name="x">300</field>
+        <field type="IntegerField" name="y">300</field>
+        <field type="CharField" name="location">(layer-1, 300, 300)</field>
+        <field to="cells.basecell" name="container" rel="ManyToOneRel">1</field>
+        <field type="IntegerField" name="child_count">0</field>
+        <field type="CharField" name="external_id"></field>
+        <field type="IntegerField" name="last_processing_cycle"><None></None></field>
+        <field type="DateTimeField" name="last_processing_time">2009-07-24 05:14:36</field>
+        <field type="DateTimeField" name="last_update">2009-07-24 05:14:36</field>
+        <field type="DateTimeField" name="created_at">2009-07-24 05:14:17</field>
+    </object>
     <object pk="1" model="cells.societycell">
         <field type="CharField" name="domain_name">Twitter</field>
         <field type="CharField" name="domain_description"></field>
@@ -246,6 +278,17 @@
         <field type="CharField" name="user_bio"></field>
         <field type="IntegerField" name="user_age">29</field>
         <field type="CharField" name="user_gender">F</field>
+    </object>
+    <object pk="9" model="cells.usercell">
+        <field type="CharField" name="user_name">alexarsh</field>
+        <field type="CharField" name="user_password">z5fgmeca</field>
+        <field type="CharField" name="user_full_name">Arshavski Alexander</field>
+        <field type="CharField" name="user_email">alexarsh5@gmail.com</field>
+        <field type="CharField" name="user_im">alexarsh5@gmail.com</field>
+        <field type="CharField" name="user_location">Netanya, Israel</field>
+        <field type="CharField" name="user_bio">I believe in friendship</field>
+        <field type="IntegerField" name="user_age">25</field>
+        <field type="CharField" name="user_gender">M</field>
     </object>
     <object pk="6" model="cells.storycell">
         <field type="BooleanField" name="is_aggregation">False</field>
@@ -278,5 +321,12 @@
         <field type="CharField" name="last_story"></field>
         <field type="DateTimeField" name="last_summary_delivered_at"><None></None></field>
         <field type="DateTimeField" name="last_story_fetched_at">2009-07-20 08:30:51</field>
+    </object>
+    <object pk="10" model="cells.agentcell">
+        <field to="cells.usercell" name="user" rel="ManyToOneRel">9</field>
+        <field type="CharField" name="datasource_type">TWITTER_FRIENDS_TIMELINE</field>
+        <field type="CharField" name="last_story"></field>
+        <field type="DateTimeField" name="last_summary_delivered_at"><None></None></field>
+        <field type="DateTimeField" name="last_story_fetched_at"><None></None></field>
     </object>
 </django-objects>
