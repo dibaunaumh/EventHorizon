@@ -160,10 +160,10 @@ class CellsTest(TestCase):
     	self.society_cell.process(d)
     	# verify that 2 summary stories were created
     	query = StoryCell.objects.filter(is_aggregation=True)
+        summary_story_count = query.count()
     	for s in query:
     		print s.name, " -----> ", s.core
-    	print "existing_summaries_count", existing_summaries_count
-    	self.assertEquals(existing_summaries_count + 2, query.count(), "Expected that 2 summary stories will be created")
+    	self.assertEquals(existing_summaries_count + 2, summary_story_count, "Expected that 2 summary stories will be created")
     	# analyze the summaries
     	# todo implement
     	
@@ -185,13 +185,15 @@ class CellsTest(TestCase):
     	d = datetime.datetime.now().microsecond
     	self.society_cell.process(d)
     	query = StoryCell.objects.filter(is_aggregation=True)
+        summary_story_count = query.count()
         for s in query:
             print s.name, " -----> ", s.core
-    	self.assertEquals(existing_summaries_count + 2, query.count(), "Expected that only 2 summary stories will be created")
+    	self.assertEquals(existing_summaries_count + 2, summary_story_count, "Expected that only 2 summary stories will be created, i.e., no summary for an old story")
 
 
     def test_cells_movement(self):
-        story = StoryCell.objects.all()[2]
+        self.assertTrue(StoryCell.objects.all().count() > 3, "There should be at least 3 Story Cells")
+        story = BaseCell.objects.filter(cell_type=STORY_CELL)[2]
         x = story.x
         y = story.y
         self.society_cell.process()
@@ -222,3 +224,37 @@ class CellsTest(TestCase):
                 self.assertTrue(cell["fields"]["core"].find("John") >= 0)
 
 
+    def test_cells_concept_extraction(self):
+        """
+        Tests that newly created story cells decompose into concept cells, matching the concepts appearing in the text.
+        """
+        # verify that the expected concepts do not exist
+        self.assertEquals(0, ConceptCell.objects.filter(name="EveryBlock").count(), "Expected that the concept EveryBlock does not exist in the test fixtures")
+        self.assertEquals(0, ConceptCell.objects.filter(name="Glenn").count(), "Expected that the concept Glenn Ford does not exist in the test fixtures")        
+        # add agents
+        self.society_cell.add_agent("Bill", "Bill", DATASOURCE_TYPE_TWITTER)
+        self.society_cell.add_agent("Al", "Al", DATASOURCE_TYPE_TWITTER)
+        # fetch agents
+        query = AgentCell.objects.filter(user__user_name="Bill")
+        self.assertTrue(query.count() > 0, "Agent wasn't created")
+        bill = query[0]
+        query = AgentCell.objects.filter(user__user_name="Al")
+        self.assertTrue(query.count() > 0, "Agent wasn't created")
+        al = query[0]
+        # add stories
+        al.add_read_story("RT @yahoo RE YQL, EveryBlock API: were working \w senator Glenn Ford on all the details", [bill.user])
+        self.society_cell.process()
+        # look up the concepts: YQL, EveryBlock, Glenn Ford
+        self.assertEquals(1, ConceptCell.objects.filter(name="EveryBlock").count(), "Expected that the concept EveryBlock would be extracted from the added story")
+        self.assertEquals(1, ConceptCell.objects.filter(name="Glenn").count(), "Expected that the concept Glenn Ford would be extracted from the added story")        
+        # get the concepts
+        everyblock = ConceptCell.objects.filter(name="EveryBlock")[0]
+        glenn = ConceptCell.objects.filter(name="Glenn")[0]
+        # test concept recipient
+        self.assertTrue(everyblock.recipients.all().count() > 0, "Expected to find reciipients for the new concepts")
+        self.assertEquals(al.user, everyblock.recipients.all()[0], "Expected to find a specific recipient of the concept")
+        self.assertTrue(glenn.recipients.all().count() > 0, "Expected to find reciipients for the new concepts")
+        self.assertEquals(al.user, glenn.recipients.all()[0], "Expected to find a specific recipient of the concept")
+        
+
+        

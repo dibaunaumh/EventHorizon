@@ -26,6 +26,22 @@ PROCESSING_CYCLE_STATUS_CHOICES = ((PROCESSING_CYCLE_STATUS_NOT_STARTED, "Not st
                                    (PROCESSING_CYCLE_STATUS_COMPLETED, "Completed"), 
                                    (PROCESSING_CYCLE_STATUS_FAILED, "Failed"))
 
+SOCIETY_CELL = "SocietyCell"
+AGENT_CELL = "AgentCell"
+USER_CELL = "UserCell"
+STORY_CELL = "StoryCell"
+CONCEPT_CELL = "ConceptCell"
+STATEMENT_CELL = "StatementCell"
+
+CELL_TYPE_CHOICES = ((SOCIETY_CELL, SOCIETY_CELL),
+                     (AGENT_CELL, AGENT_CELL),
+                     (USER_CELL, USER_CELL),
+                     (STORY_CELL, STORY_CELL),
+                     (CONCEPT_CELL, CONCEPT_CELL),
+                     (STATEMENT_CELL, STATEMENT_CELL),
+                     )
+
+
 LAYER_SIZE = 1000
 
 FETCH_STORIES_INTERVAL = 5  # minutes
@@ -52,7 +68,7 @@ class BaseCell(models.Model):
     name = models.CharField(_('name'), max_length=1000, db_index=True, help_text='The name generated for this cell')
     core = models.TextField(_('core'), help_text=_('The content of a cell'))
     layer = models.IntegerField(_('layer'), help_text=_('The layer in which the cell acts'))
-    cell_type = models.CharField(_('cell type'), max_length=50, db_index=True, editable=False, help_text=_('A sub-class discriminator field'))
+    cell_type = models.CharField(_('cell type'), max_length=50, db_index=True, choices=CELL_TYPE_CHOICES, help_text=_('A sub-class discriminator field'))
     x = models.IntegerField(_('x'), db_index=True, help_text=_('The x coordinate of the cell within its layer'))
     y = models.IntegerField(_('y'), db_index=True, help_text=_('The y coordinate of the cell within its layer'))
     location = models.CharField(_('location'), db_index=True, unique=True, max_length=30, help_text=_("A representation of the cell's location (e.g., (layer-0, 765, 678) ), used mainly to prevent collisions between cells, using the database uniqueness constraint."))
@@ -118,20 +134,27 @@ class BaseCell(models.Model):
         """Returns the celll at the given location, or None in case the location is empty."""
         query = BaseCell.objects.filter(x = x, y = y)
         if query.count() > 0:
+                # todo reduce to cell type
                 return query[0]
         return None
     
     
     def reduce_to_subclass(self):
         """Hack: tries to load the instance from a subclass of BaseCell, according to its cell_type discriminator"""
-        if self.cell_type == "SocietyCell":
+        if self.cell_type == SOCIETY_CELL:
             return SocietyCell.objects.get(pk=self.id)
-        elif self.cell_type == "AgentCell":
+        elif self.cell_type == AGENT_CELL:
             return AgentCell.objects.get(pk=self.id)
-        elif self.cell_type == "UserCell":
+        elif self.cell_type == USER_CELL:
             return UserCell.objects.get(pk=self.id)
-        elif self.cell_type == "StoryCell":
-                return StoryCell.objects.get(pk=self.id)
+        elif self.cell_type == STORY_CELL:
+            return StoryCell.objects.get(pk=self.id)
+        elif self.cell_type == CONCEPT_CELL:
+            return ConceptCell.objects.get(pk=self.id)
+        elif self.cell_type == STATEMENT_CELL:
+            return StatementCell.objects.get(pk=self.id)
+
+            
     
     
     def process(self, process_cycle_id=-1):
@@ -151,7 +174,7 @@ class BaseCell(models.Model):
     
         
     def __unicode__(self):
-        return u"[%s] %s" % (_("Agent"), self.name)
+        return u"[%s] %s" % (_(self.cell_type), self.name)
 
 
 
@@ -183,23 +206,21 @@ class SocietyCell(BaseCell):
         """Creates a child agent cell"""
         # 1st create a user
         user = UserCell()
-        user.cell_type = "UserCell"
+        user.cell_type = USER_CELL
         user.name = user_name
         user.user_name = user_name
         user.user_password = user_password
         user.layer = self.layer + 2
-        user.cell_type = "UserCell"
         user.move_to_random_location()
         # now create an agent for that user
         name = u"%s %s" % (_("Agent for"), user_name)
         agent = AgentCell()
-        agent.cell_type = "AgentCell"
+        agent.cell_type = AGENT_CELL
         agent.container = self
         agent.user = user
         agent.name = name
         agent.datasource_type = datasource_type
         agent.layer = self.layer + 1
-        agent.cell_type = "AgentCell"
         agent.move_to_random_location()
         user.container = agent
         return agent
@@ -244,12 +265,12 @@ class UserCell(BaseCell):
     #    add_concept()
 
 
-    def add_concept(self):
+    def add_user_concept(self):
         pass
 
 
     def process(self, correlation_id=-1):
-        log_event("process", "UserCell", self.id, "Not doing nothing", correlation_id)
+        log_event("process", USER_CELL, self.id, "Not doing nothing", correlation_id)
         # todo implement
         self.last_processing_cycle = correlation_id
         self.save()
@@ -262,7 +283,9 @@ class StoryCell(BaseCell):
     authors = models.ManyToManyField(UserCell, verbose_name=_('authors'), related_name='outgoing_stories', null=True, blank=True, help_text=_('who are the authors of the story'))
     recipients = models.ManyToManyField(UserCell, verbose_name=_('recipients'), related_name='incoming_stories', null=True, blank=True, help_text=_('users to whom the story will be delivered'))
     is_aggregation = models.BooleanField(_('is aggregation'), default=False, help_text=_('whether the story is an aggregation/summary of one or more other stories'))
-    aggregated_stories = models.ManyToManyField('self', verbose_name=_('aggregated stories'), null=True, blank=True, help_text=_('stories aggregated/summarized by this story'))
+    aggregated_stories = models.ManyToManyField('self', verbose_name=_('aggregated stories'), null=True, blank=True, help_text=_('If this story is a summary, this field will list the stories aggregated/summarized by this story'))
+    is_concepts_extracted = models.BooleanField(_('is concepts extracted'), default=False, null=True, blank=True, help_text=_('Indicate whether concepts were already extracted from the story'))
+    aggregated_concepts = models.ManyToManyField('ConceptCell', verbose_name=_('aggregated concepts'), null=True, blank=True, help_text=_('If this story is a summary, this field will list the concepts that will appear in the summary'))
 
 
     def __unicode__(self):
@@ -280,9 +303,11 @@ class StoryCell(BaseCell):
         - generating summary stories."""
         # if needed, update summary stories
         print "Story %d created at" % self.id, self.created_at
+        if not self.is_aggregation and not self.is_concepts_extracted:
+            self.extract_concepts(correlation_id)
         tod = today()
         if self.created_at >= tod:
-            log_event("process", "StoryCell", self.id, "Updating summary stories", correlation_id)
+            log_event("process", STORY_CELL, self.id, "Updating summary stories", correlation_id)
             self.update_summary_stories()
         # move to a location, maximizing the value of the story
         self.move()
@@ -348,27 +373,10 @@ class StoryCell(BaseCell):
             return
         # update the summary story for all recipients
         for user in self.recipients.all():
-            # look up a summary story for that user: 
-            # - it should be marked as is_aggregation
-            # - it should have the user as recipient
-            # - it should be from today
-            tod = today()
-            query = StoryCell.objects.filter(is_aggregation=True, recipients__pk=user.id, last_update__gte=tod)
-            if query.count() > 0:
-                summary_story = query[0]
-            else:
-                # if not found, create one
-                summary_story = StoryCell()
-                summary_story.cell_type = "StoryCell"
-                summary_story.name = "%s's %s %s" % (user.name, _('summary for'), tod.strftime("%c"))
-                summary_story.container = self.container
-                summary_story.layer = self.layer
-                summary_story.is_aggregation = True
-                summary_story.cell_type = "StoryCell"
-                summary_story.move_to_random_location()
-                summary_story.recipients.add(user)
+            summary_story = find_or_create_summary_story(user, self.container)
             # add the story to the summary
             summary_story.aggregated_stories.add(self)
+            summary_story.save()
             summary_story.generate_summary()
 
 
@@ -377,18 +385,125 @@ class StoryCell(BaseCell):
         recipient = self.recipients.all()[0]
         tod = datetime.datetime.today()
         authors_map = {}
-        for story in self.aggregated_stories.filter(last_update__gte=today()):
+        for story in self.aggregated_stories.all():
             for author in story.authors.all():
                 if authors_map.has_key(author):
                     authors_map[author] = authors_map[author] + 1
                 else:
                    authors_map[author] = 1
+        concepts_map = {}
+        for concept in self.aggregated_concepts.filter(recipients=recipient):
+           story_count = concept.related_stories.filter(last_update__gte=today()).count()
+           concepts_map[concept] = story_count
         # todo use template
         summary = "<h3>Summary for %s</h3>" % recipient
         for author, count in authors_map.items():
             summary = summary + "<li><a href='http://twitter.com/%s' target='_blank'>%s</a> twitted since yesterday %d <a href='http://search.twitter.com?q=from:%s' target='_blank'>tweets</a>" % (author.user_name, author, count, author.user_name)
+        if len(concepts_map) > 0:
+            summary = summary + "<hr/><h4>Concepts</h4>"
+            for concept, count in concepts_map.items():
+                summary = summary + "<li>%s - %d tweets since yesterday" % (concept.name, count)
+        
         self.core = summary
         self.save()
+
+
+    def extract_concepts(self, correlation_id):
+        """
+        Analyze the story text, to extract named entities. For each named entity, look for a matching Concept cell.
+        If found, link the concept cell to the story. Else create a new concept cell & link the story to it.
+        """
+        try:
+            client = Client()
+            response = client.get('http://%s/text_analyzer/extract_named_entities/' % get_domain(), {'text': self.core}).content
+            if response != "[]":
+                named_entities = json.loads(response)
+                for ne in named_entities:
+                    try :
+                        self.add_concept(ne)
+                    except:
+                        print sys.exc_info()
+                        log_event("extract_concepts_failed", STORY_CELL, self.id, "Adding concept '%s' extracted from story '%s' failed" % (ne[0], self.core), correlation_id)
+                # all went all, update the flag
+                self.is_concepts_extracted = True
+                self.save()
+        except:
+            print "Failed to extract concepts", sys.exc_info()
+            log_event("extract_concepts_failed", STORY_CELL, self.id, "Failed to extract concepts from story '%s'" % self.core, correlation_id)
+
+
+    def is_from_today(self):
+        """
+        Returns true if the created_at field contains a date within the last 24 hours
+        """
+        tod = today()
+        return (tod - self.created_at).days < 1
+
+
+    def add_concept(self, named_entity):
+        """
+        Looks for an existing Concept cell matching the given named entity. If found, links the
+        story to it. Else, creates a new Concept cell, & links it to the story.
+        """
+        # check whether the concept already exists
+        query = ConceptCell.objects.filter(name=named_entity["name"])
+        if query.count() > 0:
+            concept = query[0]
+        else:
+            concept = ConceptCell()
+            concept.name = named_entity["name"]
+            concept.core = concept.name
+            concept.pos_tag = named_entity["pos_tag"]
+            concept.guessed_type = named_entity["guessed_type"]
+            concept.cell_type = CONCEPT_CELL
+            concept.container = self
+            concept.layer = self.layer + 1
+            concept.move_to_random_location()
+        concept.related_stories.add(self)
+        # todo link the concept to the story recipient
+        for recipient in self.recipients.all():
+            concept.recipients.add(recipient)
+            if self.is_from_today():
+                # add concept to summary story
+                summary_story = find_or_create_summary_story(recipient, self.container)
+                summary_story.aggregated_concepts.add(concept)
+                summary_story.save()
+                summary_story.generate_summary()
+        concept.save()
+        # log event: concept added
+
+
+
+def find_or_create_summary_story(user, agent):
+    """
+    Look up a summary story for the given user: 
+    - it should be marked as is_aggregation
+    - it should have the user as recipient
+    - it should be from today
+    """
+    tod = today()
+    #query = StoryCell.objects.filter(is_aggregation=True, recipients__pk=user.id, last_update__gte=tod)
+    query = StoryCell.objects.filter(is_aggregation=True, recipients__pk=user.id)
+    found_story = None
+    if query.count() > 0:
+        for s in query:
+            if (s.created_at - tod).days < 1:
+                found_story = s
+    if found_story:
+        summary_story = found_story
+    else:
+        # if not found, create one
+        summary_story = StoryCell()
+        summary_story.cell_type = STORY_CELL
+        summary_story.name = "%s's %s %s" % (user.name, _('summary for'), tod.strftime("%c"))
+        summary_story.container = agent
+        summary_story.layer = 2
+        summary_story.is_aggregation = True
+        summary_story.move_to_random_location()
+        summary_story.recipients.add(user)
+        summary_story.save()
+    return summary_story
+
 
 
 class AgentCell(BaseCell):
@@ -423,7 +538,7 @@ class AgentCell(BaseCell):
     def add_read_story(self, text, authors):
         """Creates a StoryCell with the given text & authors. Sets the agent's user as the story recipient."""
         story = StoryCell()
-        story.cell_type = "StoryCell"
+        story.cell_type = STORY_CELL
         story.name = text
         story.container = self
         story.core = text
@@ -455,13 +570,14 @@ class AgentCell(BaseCell):
                     self.add_read_story(key, authors)
                     self.add_user(tweets[key][0])
                 except:
-                    log_event("fetch_stories_failed", "AgentCell", self.id, "Adding fetched story %s failed, for %s" % (key, self.user), correlation_id)
+                    log_event("fetch_stories_failed", AGENT_CELL, self.id, "Adding fetched story %s failed, for %s" % (key, self.user), correlation_id)
         except:
-            log_event("fetch_stories_failed", "AgentCell", self.id, "Failed to fetch stories for %s" % self.user, correlation_id)
+            print "Failed to fetch stories", sys.exc_info()
+            log_event("fetch_stories_failed", AGENT_CELL, self.id, "Failed to fetch stories for %s" % self.user, correlation_id)
 
 
     def process(self, correlation_id=-1):
-        log_event("process", "AgentCell", self.id, "Fetching stories", correlation_id)
+        log_event("process", AGENT_CELL, self.id, "Fetching stories", correlation_id)
         # if needed send summary story
         t = datetime.datetime.now()
         if self.last_summary_delivered_at == None or (t - self.last_summary_delivered_at).days > 1:
@@ -502,8 +618,24 @@ class AgentCell(BaseCell):
     
 class ConceptCell(BaseCell):
     """Represents a semantic concept"""
-    pass
+    guessed_type = models.CharField(_('guessed type'), max_length=200, help_text=_('A concept is a semantic class or instance referred to in a story'))
+    pos_tag = models.CharField(_('pos tag'), max_length=30, help_text=_('the Part-of-Speech tag in which the concept was mentioned'))
+    related_stories = models.ManyToManyField(StoryCell, verbose_name=_('related stories'), related_name='concepts', help_text=_('list of stories that referred to the concept'))
+    recipients = models.ManyToManyField(UserCell, verbose_name=_('recipients'), related_name='incoming_concepts', null=True, blank=True, help_text=_('users to whom the concept will be delivered'))
+    
+    
+    def add_recipient(self, user):
+        self.recipients.add(user)
+        self.save()
+    
+    
+    def process(self, correlation_id=-1):
+        """
+        Add the concept to the summary story of each recipient
+        """
+        log_event("process", CONCEPT_CELL, self.id, "Updating summary stories", correlation_id)
 
+            
 
 
 class StatementCell(BaseCell):

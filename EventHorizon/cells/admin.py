@@ -23,8 +23,8 @@ class AgentCellOptions(admin.ModelAdmin):
 
 
 class StoryCellOptions(admin.ModelAdmin):
-    list_display = ('name', 'core', 'layer', 'location', 'container', 'x', 'y', 'child_count', 'external_id', 'last_processing_cycle', 'last_processing_time',)
-    list_filter = ('layer', 'last_processing_cycle',)
+    list_display = ('name', 'core', 'layer', 'location', 'container', 'x', 'y', 'child_count', 'external_id', 'is_aggregation', 'last_processing_cycle', 'last_processing_time',)
+    list_filter = ('layer', 'last_processing_cycle', 'is_aggregation')
     search_fields = ('name', 'core', 'location',)
     ordering = ('name',)
 
@@ -34,6 +34,14 @@ class UserCellOptions(admin.ModelAdmin):
     list_filter = ('layer', 'last_processing_cycle',)
     search_fields = ('name', 'core', 'location',)
     ordering = ('name',)
+    
+
+class ConceptCellOptions(admin.ModelAdmin):
+    list_display = ('name', 'core', 'layer', 'location', 'container', 'child_count', 'external_id', 'last_processing_cycle', 'last_processing_time',)
+    list_filter = ('layer', 'last_processing_cycle',)
+    search_fields = ('name', 'core', 'location',)
+    ordering = ('name',)
+    
 
     
 
@@ -42,3 +50,4 @@ admin.site.register(SocietyCell, SocietyCellOptions)
 admin.site.register(AgentCell, AgentCellOptions)
 admin.site.register(StoryCell, StoryCellOptions)
 admin.site.register(UserCell, UserCellOptions)
+admin.site.register(ConceptCell, ConceptCellOptions)

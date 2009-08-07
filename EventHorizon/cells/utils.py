@@ -2,11 +2,11 @@ from time import gmtime
 import datetime
 import twitter
 import sys
-from event_log.models import log_event
 import math
 from django.conf import settings
 from django.contrib.sites.models import Site
 import random
+from event_log.models import log_event
 
 
 ENGINE_TWITTER_USER_NAME = "EventHorizonEng"
@@ -75,3 +75,5 @@ def near_by_location(location, min_distance=10, max_distance=100, limit=1000):
                 if 0 < x < limit and 0 < y < limit:
                     candidates.append( (x, y) )
     return random.choice(candidates)
+
+

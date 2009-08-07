@@ -14,7 +14,7 @@ def get_tweets(request):
         if 'user' not in request.GET:
             return HttpResponse('Please enter twitter username')
     else:
-        return HttpResponse('Please enter twitter username')
+        return HttpResponse('Please use HTTP GET')
     try:
         client = twitter.Api(username=request.GET['user'], password=request.GET['password'])
         latest_posts = client.GetFriendsTimeline(request.GET['user'])
@@ -43,7 +43,7 @@ def get_tweets(request):
         story.in_reply_to_user = reply_to_user
         story.last_update = post.created_at
         
-        tweets[story.text] = (user.name, post.id);
+        tweets[story.text] =  (user.name, post.id)
 
     #tweets = [users, stories]
 

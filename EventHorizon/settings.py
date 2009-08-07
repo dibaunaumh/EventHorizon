@@ -85,4 +85,5 @@ INSTALLED_APPS = (
     'event_log',
     'cells',
     'twitter_sensor',
+    'text_analyzer',
 )
