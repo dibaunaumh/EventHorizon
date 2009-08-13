@@ -2,6 +2,7 @@ from django.http import HttpResponse
 import simplejson as json
 from models import *
 import nltk
+import sys
 
 #def get_tweets(request, since_id, user, password):
 def extract_named_entities(request):
@@ -29,5 +30,32 @@ def extract_named_entities(request):
         return HttpResponse('Failed to extract named entitied from text "%s": %s' % (text, str(sys.exc_info()[1])) )
 
     return HttpResponse(json.dumps(named_entities))
+
+def extract_essence(request):
+    if request.GET:
+        if 'text' not in request.GET:
+            return HttpResponse('Please enter the text to analyze')
+    else:
+        return HttpResponse('Please enter the text to analyze')
+    try:
+        text = request.GET["text"]
+        text = text.strip()
+        if text.startswith('RT'):
+            text = (":").join(text.split(":")[1:]).strip()
+        if text.find('by @') != -1 and len(text.split('by @')[1].split(" ")) < 3:
+            text = text.split('by @')[0].strip()
+        if text.find('via @') != -1 and len(text.split('via @')[1].split(" ")) < 3:
+            text = text.split('via @')[0].strip()
+    except:
+        return HttpResponse('Failed to extract the essence from text "%s": %s' % (text, str(sys.exc_info()[1])) )
+    return HttpResponse(text)
+
+
+
+
+
+
+
+
 
 

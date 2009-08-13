@@ -7,5 +7,5 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('',
     # Example:
     (r'^/extract_named_entities', 'text_analyzer.services.extract_named_entities'),
-
+    (r'^/extract_essence', 'text_analyzer.services.extract_essence'),
 )

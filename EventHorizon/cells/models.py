@@ -286,7 +286,7 @@ class StoryCell(BaseCell):
     aggregated_stories = models.ManyToManyField('self', verbose_name=_('aggregated stories'), null=True, blank=True, help_text=_('If this story is a summary, this field will list the stories aggregated/summarized by this story'))
     is_concepts_extracted = models.BooleanField(_('is concepts extracted'), default=False, null=True, blank=True, help_text=_('Indicate whether concepts were already extracted from the story'))
     aggregated_concepts = models.ManyToManyField('ConceptCell', verbose_name=_('aggregated concepts'), null=True, blank=True, help_text=_('If this story is a summary, this field will list the concepts that will appear in the summary'))
-
+    is_essence_extracted = models.BooleanField(_('is essence extracted'), default=False, null=True, blank=True, help_text=_('Indicate whether essence was already extracted from the story'))
 
     def __unicode__(self):
         return u"[%s] %s" % (_('Story'), self.name)
@@ -305,6 +305,8 @@ class StoryCell(BaseCell):
         print "Story %d created at" % self.id, self.created_at
         if not self.is_aggregation and not self.is_concepts_extracted:
             self.extract_concepts(correlation_id)
+        if not self.is_aggregation and not self.is_essence_extracted:
+            self.extract_essence(correlation_id)
         tod = today()
         if self.created_at >= tod:
             log_event("process", STORY_CELL, self.id, "Updating summary stories", correlation_id)
@@ -407,6 +409,49 @@ class StoryCell(BaseCell):
         self.core = summary
         self.save()
 
+    def extract_essence(self, correlation_id):
+        """
+        Analyze the story text, to extract the essence from it. For the essence, look for a matching StoryEssence cell.
+        If found, link the story cell to the StoryEssence cell. Else create a new StoryEssence cell & link the story to it.
+        """
+        try:
+            print "extract_essence called for story '%s'" % self.core
+            client = Client()
+            response = client.get('http://%s/text_analyzer/extract_essence/' % get_domain(), {'text': self.core}).content
+            print "got extract essence response: ", response
+            if response != "":
+                try :
+                    self.add_essence(response)
+                except:
+                    print sys.exc_info()
+                    print "essence=", response
+                    log_event("extract_essence_failed", STORY_CELL, self.id, "Adding essence '%s' extracted from story '%s' failed" % (response, self.core), correlation_id)
+                # all went all, update the flag
+                self.is_essence_extracted = True
+                self.save()
+        except:
+            print "Failed to extract essence", sys.exc_info()
+            log_event("extract_essence_failed", STORY_CELL, self.id, "Failed to extract essence from story '%s'" % self.core, correlation_id)
+
+
+    def add_essence(self, essence):
+        """
+        Looks for an existing StoryEssence cell matching the given essence. If found, links the
+        story to it. Else, creates a new StoryEssence cell, & links it to the story.
+        """
+        print "*************** Creating essence cell for: ", essence
+        # check whether the essence already exists
+        query = StoryEssenceCell.objects.filter(core=essence)
+        if len(query) > 0:
+            essence_cell = query[0]
+        else:
+            essence_cell = StoryEssenceCell()
+        essence_cell.related_stories.add(self)
+        # todo link the essence to the story recipient
+        for recipient in self.recipients.all():
+            essence_cell.recipients.add(recipient)
+        essence_cell.save()
+        # log event: essence_cell added
 
     def extract_concepts(self, correlation_id):
         """
@@ -614,7 +659,10 @@ class AgentCell(BaseCell):
     def __unicode__(self):
         return u"[%s] %s" % (_("Agent"), self.name)
     
-    
+class StoryEssenceCell(BaseCell):
+    """Represents a story essance"""
+    related_stories = models.ManyToManyField(StoryCell, verbose_name=_('related stories'), related_name='essences', help_text=_('list of stories that referred to the essence'))  
+    recipients = models.ManyToManyField(UserCell, verbose_name=_('recipients'), related_name='incoming_essence', null=True, blank=True, help_text=_('users to whom the essence will be delivered'))
     
 class ConceptCell(BaseCell):
     """Represents a semantic concept"""
