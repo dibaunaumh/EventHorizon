@@ -76,6 +76,12 @@ TEMPLATE_DIRS = (
     os.path.join(os.path.dirname(__file__), 'templates'),
 )
 
+AMQP_SERVER = "localhost"
+AMQP_PORT = 5672
+AMQP_USER = "myuser"
+AMQP_PASSWORD = "mypassword"
+AMQP_VHOST = "myvhost"
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -86,4 +92,5 @@ INSTALLED_APPS = (
     'cells',
     'twitter_sensor',
     'text_analyzer',
+    'celery'
 )

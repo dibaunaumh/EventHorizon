@@ -1,5 +1,6 @@
 from services import *
 
+#add try and catch
 class ExtractNamedEntitiesTask(Task):
      name = "text_analyzer.extract_named_entities"
      def run(self, request, **kwargs):
@@ -8,6 +9,7 @@ class ExtractNamedEntitiesTask(Task):
          return extract_named_entities(request)
 tasks.register(ExtractNamedEntitiesTask)
 
+#add try and catch
 class ExtractEssenceTask(Task):
      name = "text_analyzer.extract_essence"
      def run(self, request, **kwargs):
